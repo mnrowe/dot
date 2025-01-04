@@ -1,4 +1,3 @@
-#!/bin/bash
 # shellcheck disable=SC1090,SC1091
 
 case $- in
@@ -18,35 +17,19 @@ export USER="${USER:-$(whoami)}"
 export GITUSER="$USER"
 export TZ=America/New_York
 export REPOS="$HOME/Repos"
+export SCRIPTS="$HOME/.local/bin/scripts"
+export TN="$HOME/truenas"
 export GHREPOS="$REPOS/github.com/$GITUSER"
-export DOTFILES="$GHREPOS/dot"
+export DOTFILES="$REPOS/dot"
 export HELP_BROWSER=w3m
-export DESKTOP="$HOME/Desktop"
 export DOCUMENTS="$HOME/Documents"
 export DOWNLOADS="$HOME/Downloads"
-export TEMPLATES="$HOME/Templates"
-export SCRIPTS="$HOME/Scripts"
-export PUBLIC="$HOME/Public"
-export PRIVATE="$HOME/Private"
-export PICTURES="$HOME/Pictures"
-export MUSIC="$HOME/Music"
-export VIDEOS="$HOME/Movies"
-export PDFS="$HOME/usb/pdfs"
-export VIRTUALMACHINES="$HOME/VirtualMachines"
-export CLIP_DIR="$VIDEOS/clips"
-export CLIP_DATA="$GHREPOS/clip/data"
-export CLIP_VOLUME=0
-export CLIP_SCREEN=0
 export CLICOLOR=1
 export HRULEWIDTH=73
 export GOPATH="$HOME/.local/go"
 export GOBIN="$HOME/.local/bin"
-export GOPROXY=direct
 #export NVIM_SCREENKEY=1
-export CGO_ENABLED=0
-export PYTHONDONTWRITEBYTECODE=2
 export LC_COLLATE=C
-export CFLAGS="-Wall -Wextra -Werror -O0 -g -fsanitize=address -fno-omit-frame-pointer -finstrument-functions"
 
 # gruvbox-material
 export LS_COLORS="di=38;5;245:fi=38;5;223:ln=38;5;179:ex=38;5;108:*.txt=38;5;223"
@@ -59,26 +42,8 @@ export LESS_TERMCAP_se=$'\e[0m'          # end standout
 export LESS_TERMCAP_us=$'\e[4m'          # start underline
 export LESS_TERMCAP_ue=$'\e[0m'          # end underline
 
-export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
-export ANSIBLE_INVENTORY="$HOME/.config/ansible/inventory.yaml"
-export ANSIBLE_LOAD_CALLBACK_PLUGINS=1
 #export ANSIBLE_STDOUT_CALLBACK=json
 
-export K8SAPP_CLUSTER=dev
-
-[[ -d /.vim/spell ]] && export VIMSPELL=("$HOME/.vim/spell/*.add")
-
-# ----------------------------- PostgreSQL ----------------------------
-
-export PGPASS=~/.pgpass
-# export PGHOST=localhost
-# export PGUSER=myuser
-# export PGDATABASE=mydatabase
-
-# -------------------------------- gpg -------------------------------
-
-GPG_TTY=$(tty)
-export GPG_TTY
 
 # ------------------------------- pager ------------------------------
 
@@ -236,7 +201,7 @@ _have setxkbmap && test -n "$DISPLAY" &&
 #      (use exec scripts instead, which work from vim and subprocs)
 
 unalias -a
-alias todo='vi ~/.todo'
+alias nv="nvim"
 alias ip='ip -c'
 alias '?'=gpt
 alias '??'=duck
@@ -327,21 +292,6 @@ clone() {
 
 # ------------- source external dependencies / completion ------------
 
-# for mac
-if [[ "$OSTYPE" == "darwin"* ]]; then
-	brew_prefix="$(brew --prefix)"
-	if [[ -r "$brew_prefix/etc/profile.d/bash_completion.sh" ]]; then
-		source "$brew_prefix/etc/profile.d/bash_completion.sh"
-	fi
-fi
-
-owncomp=(
-	pdf zet keg kn yt gl auth pomo config live iam sshkey ws x clip
-	./build build b ./k8sapp k8sapp ./setup ./cmd run ./run
-	foo ./foo cmds ./cmds z bon openapi obs vault var sunrise multicall
-	kimono tag cm
-)
-
 for i in "${owncomp[@]}"; do complete -C "$i" "$i"; done
 
 _have gh && . <(gh completion -s bash)
@@ -387,3 +337,4 @@ _have terraform && complete -C /usr/bin/terraform tf
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+
