@@ -224,13 +224,10 @@ alias clear='printf "\e[H\e[2J"'
 alias c='printf "\e[H\e[2J"'
 alias env='env -u LESS_TERMCAP_mb -u LESS_TERMCAP_md -u LESS_TERMCAP_me -u LESS_TERMCAP_so -u LESS_TERMCAP_se -u LESS_TERMCAP_us -u LESS_TERMCAP_ue'
 alias neo="neo -D -c gold"
-alias more="less"
+alias nvc='nvim $HOME/.config/nvim'
 alias gitl="git log -n 5 --graph --decorate --oneline"
 alias gp="git push"
 alias gptags="git push origin --tags"
-alias km="kimono"
-alias s=wee
-alias cur="vi ~/.currently"
 
 set-editor() {
 	export EDITOR="$1"
