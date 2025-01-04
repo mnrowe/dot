@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+week=$(date +"%Y-W%V")
+formatted_file_name=$week.md
+if [[ $(uname -n) == "DTM017" ]]; then
+    cd "/mnt/c/Users/MRowe/OneDrive - Credit Control Corporation/obsd_h" || exit
+fi
+if [[ $(uname -n) == "wilco" ]]; then
+    cd "/home/rwe/Documents/obsd" || exit
+fi
+touch "periodic-notes/weekly/${formatted_file_name}"
+nvim "periodic-notes/weekly/${formatted_file_name}"

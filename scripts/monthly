@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+month=$(date +"%Y-%m")
+formatted_file_name=$month.md
+if [[ $(uname -n) == "DTM017" ]]; then
+    cd "/home/mrowe/docs/obsd_h" || exit
+fi
+if [[ $(uname -n) == "wilco" ]]; then
+    cd "/home/rwe/Documents/obsd" || exit
+fi
+
+touch "periodic-notes/monthly/${formatted_file_name}"
+nvim "periodic-notes/monthly/${formatted_file_name}"

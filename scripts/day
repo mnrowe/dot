@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+today=$(date +"%Y-%m-%d")
+formatted_file_name=$today.md
+if [[ $(uname -n) == "DTM017" ]]; then
+    cd "/home/mrowe/docs/obsd_h" || exit
+fi
+if [[ $(uname -n) == "wilco" ]]; then
+    cd "/home/rwe/Documents/obsd" || exit
+fi
+if [ "$ODR" = "work" ]; then
+    cd "/home/mrowe/docs/obsd_w" || exit
+fi
+
+touch "periodic-notes/daily/${formatted_file_name}"
+nvim "periodic-notes/daily/${formatted_file_name}"
