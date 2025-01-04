@@ -239,6 +239,30 @@ set-editor() {
 _have "vim" && set-editor vi
 _have "nvim" && set-editor nvim
 
+# ----------------------------- keybinds ----------------------------
+
+bind -x '"\C-f": tmux-sessionizer'
+
+# ----------------------------- obsd ----------------------------
+
+if [[ $(uname -n) == "wilco" ]]; then
+    export OBSD='/home/rwe/Documents/obsd'
+    alias oo='nvim /home/rwe/Documents/obsd'
+    alias or='nvim /home/rwe/Documents/obsd/inbox/*.md'
+fi
+
+if [[ $(uname -n) == "DTM017" ]]; then
+    export OBSD='/home/mrowe/docs/obsd_h'
+    alias oo='nvim /home/mrowe/docs/obsd_h'
+    alias or='nvim /home/mrowe/docs/obsd_h/inbox/*.md'
+fi
+
+if [ "$ODR" = "work" ]; then
+    export OBSD='/home/mrowe/docs/obsd_w'
+    alias oo='nvim /home/mrowe/docs/obsd_w'
+    alias or='nvim /home/mrowe/docs/obsd_w/inbox/*.md'
+fi
+
 # ----------------------------- functions ----------------------------
 
 envx() {
