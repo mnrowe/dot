@@ -202,6 +202,7 @@ _have setxkbmap && test -n "$DISPLAY" &&
 
 unalias -a
 alias nv="nvim"
+alias ta="tmux-new"
 alias obsd="cd ~/Documents/obsd"
 alias ip='ip -c'
 alias '?'=gpt
