@@ -94,7 +94,7 @@ pathprepend \
 	/usr/local/go/bin \
 	/usr/local/opt/openjdk/bin \
 	/usr/local/bin \
-	/opt/homebrew/bin \
+	/opt/nvim-linux64/bin \
 	"$SCRIPTS"
 
 pathappend \
