@@ -13,6 +13,7 @@ _source_if() { [[ -r "$1" ]] && source "$1"; }
 # ----------------------- environment variables ----------------------
 
 export LANG=en_US.UTF-8
+export LC_ALL=C.UTF-8
 export USER="${USER:-$(whoami)}"
 export GITUSER="$USER"
 export TZ=America/New_York
@@ -29,7 +30,6 @@ export HRULEWIDTH=73
 export GOPATH="$HOME/.local/go"
 export GOBIN="$HOME/.local/bin"
 #export NVIM_SCREENKEY=1
-export LC_COLLATE=C
 
 # gruvbox-material
 export LS_COLORS="di=38;5;245:fi=38;5;223:ln=38;5;179:ex=38;5;108:*.txt=38;5;223"
