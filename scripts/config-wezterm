@@ -21,8 +21,9 @@ config-wezterm() {
 	fi
 
 	echo "$target/.wezterm.lua -> $dir/wezterm.lua"
-	ln -sfn "$dir/wezterm.lua" "$target/.wezterm.lua"
+	ln -sfn "$dir/wezterm.lua" "$target"
 
 }
 
 config-wezterm
+
