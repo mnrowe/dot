@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 read -rp "Do you really want to reconfigure everything destructively? [y|N] " resp
 [[ ${resp,,} != y ]] && exit 0
