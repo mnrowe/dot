@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+read -rp "Do you really want to reconfigure everything destructively? [y|N] " resp
+[[ ${resp,,} != y ]] && exit 0
+
+cd "$SCRIPTS" || cd dot/scripts || cd dotfiles/scripts || cd ../
+scripts=("config-scripts" "config-bash" "config-nvim" "config-tmux")
+
+for script in "${scripts[@]}"; do
+  echo "running: $script"
+  bash "$script"
+done
+
