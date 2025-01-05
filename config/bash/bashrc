@@ -245,7 +245,7 @@ bind -x '"\C-f": tmux-sessionizer'
 
 # ----------------------------- obsd ----------------------------
 
-if [[ $(uname -n) == "wilco" ]]; then
+if [[ $(uname -n) == "wilco" || $(uname -n) == "ctrl" ]]; then
     export OBSD='/home/rwe/Documents/obsd'
     alias oo='nvim /home/rwe/Documents/obsd'
     alias or='nvim /home/rwe/Documents/obsd/inbox/*.md'
