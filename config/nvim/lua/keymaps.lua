@@ -46,7 +46,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- Obsidian
-if vim.fn.hostname() == "wilco" then
+if vim.fn.hostname() == "wilco" or vim.fn.hostname() == "ctrl" then
   -- navigate the vault
   vim.keymap.set("n", "<leader>oo", ":cd /home/rwe/Documents/obsd<cr>")
   -- search for files in full vault
