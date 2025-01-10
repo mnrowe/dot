@@ -3,7 +3,7 @@
 today=$(date +"%Y-%m-%d")
 formatted_file_name=$today.md
 if [[ $(uname -n) == "DTM017" ]]; then
-    cd "/home/mrowe/docs/obsd_h" || exit
+    cd "/home/mrowe/Documents/obsd_h" || exit
 fi
 if [[ $(uname -n) == "wilco" ]]; then
     cd "/home/rwe/Documents/obsd" || exit
