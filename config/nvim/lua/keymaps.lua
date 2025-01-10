@@ -89,6 +89,6 @@ vim.keymap.set("n", "<leader>ol", ":ObsidianBacklinks<cr>")
 -- must have cursor on title
 vim.keymap.set("n", "<leader>of", ":s/\\(# \\)[^_]*_/\\1/ | s/-/ /g<cr>")
 -- delete file in current buffer
-vim.keymap.set("n", "<leader>odD", ":!rm '%:p'<cr>:bd<cr>")
+vim.keymap.set("n", "<leader>orm", ":!rm '%:p'<cr>:bd<cr>")
 
 -- vim: ts=2 sts=2 sw=2 et
