@@ -3,7 +3,7 @@
 # Directory containing markdown files
 
 if [[ $(uname -n) == "DTM017" ]]; then
-    VAULT_DIR="/home/mrowe/docs/obsd_h"
+    VAULT_DIR="/home/mrowe/Documents/obsd_h"
 fi
 if [[ $(uname -n) == "wilco" ]]; then
     VAULT_DIR="/home/rwe/Documents/obsd"

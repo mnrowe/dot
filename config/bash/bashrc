@@ -253,15 +253,15 @@ if [[ $(uname -n) == "wilco" || $(uname -n) == "ctrl" ]]; then
 fi
 
 if [[ $(uname -n) == "DTM017" ]]; then
-    export OBSD='/home/mrowe/docs/obsd_h'
-    alias oo='nvim /home/mrowe/docs/obsd_h'
-    alias or='nvim /home/mrowe/docs/obsd_h/inbox/*.md'
+    export OBSD='/home/mrowe/Documents/obsd_h'
+    alias oo='nvim /home/mrowe/Documents/obsd_h'
+    alias or='nvim /home/mrowe/Documents/obsd_h/inbox/*.md'
 fi
 
 if [ "$ODR" = "work" ]; then
-    export OBSD='/home/mrowe/docs/obsd_w'
-    alias oo='nvim /home/mrowe/docs/obsd_w'
-    alias or='nvim /home/mrowe/docs/obsd_w/inbox/*.md'
+    export OBSD='/home/mrowe/Documents/obsd_w'
+    alias oo='nvim /home/mrowe/Documents/obsd_w'
+    alias or='nvim /home/mrowe/Documents/obsd_w/inbox/*.md'
 fi
 
 # ----------------------------- functions ----------------------------

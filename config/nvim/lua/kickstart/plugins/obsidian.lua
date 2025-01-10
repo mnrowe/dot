@@ -14,7 +14,7 @@ return {
           workspaces = {
             {
               name = "Home",
-              path = "/home/mrowe/docs/obsd_h",
+              path = "/home/mrowe/Documents/obsd_h",
             },
           },
           notes_subdir = "inbox",
