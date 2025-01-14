@@ -13,8 +13,8 @@ _source_if() { [[ -r "$1" ]] && source "$1"; }
 # ----------------------- environment variables ----------------------
 
 
-export now="--force --grace-period 0"
-export do="--dry-run=client -o yaml"
+export NOW="--force --grace-period 0"
+export DO="--dry-run=client -o yaml"
 export LANG=en_US.UTF-8
 export LC_ALL=C.UTF-8
 export USER="${USER:-$(whoami)}"
@@ -204,7 +204,7 @@ _have setxkbmap && test -n "$DISPLAY" &&
 #      (use exec scripts instead, which work from vim and subprocs)
 
 unalias -a
-alias do="--dry-run=client -o yaml"
+alias k="kubectl"
 alias nv="nvim"
 alias ta="tmux-new"
 alias obsd="cd ~/Documents/obsd"
