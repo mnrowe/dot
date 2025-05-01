@@ -257,6 +257,7 @@ fi
 
 if [[ $(uname -n) == "DTM017" ]]; then
     export OBSD='/home/mrowe/Documents/obsd_h'
+    alias obsd="cd ~/Documents/obsd_h"
     alias oo='nvim /home/mrowe/Documents/obsd_h'
     alias or='nvim /home/mrowe/Documents/obsd_h/inbox/*.md'
 fi
