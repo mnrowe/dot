@@ -8,7 +8,7 @@ fi
 file_name=$(echo "$1" | tr ' ' '-')
 formatted_file_name=$(date "+%Y-%m-%d")_${file_name}.md
 if [[ $(uname -n) == "DTM017" ]]; then
-    cd "/home/mrowe/docs/obsd_h" || exit
+    cd "/home/mrowe/Documents/obsd_h" || exit
 fi
 if [[ $(uname -n) == "wilco" ]]; then
     cd "/home/rwe/Documents/obsd" || exit

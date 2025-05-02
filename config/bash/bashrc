@@ -1,4 +1,4 @@
-# shellcheck disable=SC1090,SC1091
+#/ shellcheck disable=SC1090,SC1091
 
 case $- in
 *i*) ;; # interactive
@@ -204,6 +204,7 @@ _have setxkbmap && test -n "$DISPLAY" &&
 #      (use exec scripts instead, which work from vim and subprocs)
 
 unalias -a
+alias ssha='eval $(ssh-agent) && ssh-add'
 alias k="kubectl"
 alias nv="nvim"
 alias ta="tmux-new"
@@ -366,3 +367,4 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
+eval "$(ssh-agent -s)"
