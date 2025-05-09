@@ -51,6 +51,8 @@ if vim.fn.hostname() == "wilco" or vim.fn.hostname() == "ctrl" then
   vim.keymap.set("n", "<leader>oo", ":cd /home/rwe/Documents/obsd<cr>")
   -- search for files in full vault
   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd<cr>")
+  vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes/resources<cr>")
+  vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes/courses<cr>")
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/rwe/Documents/obsd<cr>")
   -- move file in current buffer to zettelkasten folder
   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/rwe/Documents/obsd/zettelkasten/<cr>:bd<cr>")
@@ -61,6 +63,8 @@ if vim.fn.hostname() == "DTM017" then
   -- navigate the vault
   vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/docs/obsd_h<cr>")
   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_h<cr>")
+  vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/morwe/Documents/obsd/notes/resources<cr>")
+  vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/courses<cr>")
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd_h<cr>")
   -- move file in current buffer to zettelkasten folder
   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_h/zettelkasten<cr>:bd<cr>")
