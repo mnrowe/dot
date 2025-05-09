@@ -9,7 +9,7 @@ if [[ $(uname -n) == "wilco" ]]; then
     VAULT_DIR="/home/rwe/Documents/obsd"
 fi
 if [ "$ODR" = "work" ]; then
-    VAULT_DIR="/home/mrowe/docs/obsd_w"
+    VAULT_DIR="/home/mrowe/Documents/obsd_w"
 fi
 SOURCE_DIR="zettelkasten"
 DEST_DIR="notes"
