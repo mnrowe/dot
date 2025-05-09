@@ -63,7 +63,7 @@ if vim.fn.hostname() == "DTM017" then
   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_h<cr>")
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd_h<cr>")
   -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/docs/obsd_h/zettelkasten<cr>:bd<cr>")
+  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_h/zettelkasten<cr>:bd<cr>")
 end
 
 local obsd_value = vim.fn.getenv "ODR"
@@ -72,7 +72,7 @@ if obsd_value == "work" then
   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_w<cr>")
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd_w<cr>")
   -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/docs/obsd_w/zettelkasten<cr>:bd<cr>")
+  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_w/zettelkasten<cr>:bd<cr>")
 end
 
 -- convert note to note template and remove leading white space
