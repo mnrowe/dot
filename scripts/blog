@@ -47,9 +47,15 @@ if [[ $# -gt 1 ]]; then
 fi
 
 # set filename to the argument given to the script
-if [[ $# -eq 1 ]]; then
-	filename=$1
-fi
+case "$1" in
+zet)
+	get_filename
 
-open_file "$OBSD/"
-
+	open_file "$HOME/Repos/blog/content/zet" "zet"
+	;;
+"")
+	cd "$HOME/Repos/blog" || exit
+	;;
+*)
+	echo "Error invalid parameter. Use blog zet|article"
+esac
