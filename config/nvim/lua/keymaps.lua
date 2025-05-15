@@ -56,6 +56,7 @@ if vim.fn.hostname() == "wilco" or vim.fn.hostname() == "ctrl" then
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/rwe/Documents/obsd<cr>")
   -- move file in current buffer to zettelkasten folder
   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/rwe/Documents/obsd/zettelkasten/<cr>:bd<cr>")
+  vim.keymap.set("n", "<leader>odd", ":!rm '%:p'<cr>:bd<cr>")
 end
 
 --  if hostname is DTM017
@@ -68,6 +69,7 @@ if vim.fn.hostname() == "DTM017" then
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd<cr>")
   -- move file in current buffer to zettelkasten folder
   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd/zettelkasten<cr>:bd<cr>")
+  vim.keymap.set("n", "<leader>odd", ":!rm '%:p'<cr>:bd<cr>")
 end
 
 -- local obsd_value = vim.fn.getenv "ODR"

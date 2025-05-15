@@ -2,15 +2,15 @@
 
 # Directory containing markdown files
 
-if [[ $(uname -n) == "DTM017" ]]; then
-    VAULT_DIR="/home/mrowe/Documents/obsd"
-fi
-if [[ $(uname -n) == "wilco" ]]; then
-    VAULT_DIR="/home/rwe/Documents/obsd"
-fi
-if [ "$ODR" = "work" ]; then
-    VAULT_DIR="/home/mrowe/Documents/obsd_w"
-fi
+# if [[ $(uname -n) == "DTM017" ]]; then
+#     VAULT_DIR="/home/mrowe/Documents/obsd"
+# fi
+# if [[ $(uname -n) == "wilco" ]]; then
+#     VAULT_DIR="/home/rwe/Documents/obsd"
+# fi
+
+VAULT_DIR="$HOME/Documents/obsd"
+
 SOURCE_DIR="zettelkasten"
 DEST_DIR="notes"
 
