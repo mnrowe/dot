@@ -5,25 +5,6 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-# case "$1" in
-#
-# work)
-#   cd "$HOME/Documents/obsd" || exit
-#   touch "notes/work/${formatted_file_name}"
-#   nvim "notes/work/${formatted_file_name}"
-#   ;;
-# "")
-#   cd "$HOME/Documents/obsd" || exit
-#   touch "inbox/${formatted_file_name}"
-#   nvim "inbox/${formatted_file_name}"
-#   ;;
-# *)
-#   echo "Error: A file name must be set, e.g. on \"the wonderful thing about tiggers\"."
-#   exit 1
-#   ;;
-# esac
-
-
 cd "$HOME/Documents/obsd" || exit
 
 if [ "$1" = "work" ]; then
