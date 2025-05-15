@@ -210,7 +210,7 @@ alias ssha='eval $(ssh-agent) && ssh-add'
 alias k="kubectl"
 alias nv="nvim"
 alias ta="tmux-new"
-alias obsd="cd ~/Documents/obsd"
+alias obsd="cd $HOME/Documents/obsd"
 alias ip='ip -c'
 alias '?'=gpt
 alias '??'=duck
@@ -253,22 +253,15 @@ bind -x '"\C-f": tmux-sessionizer'
 # ----------------------------- obsd ----------------------------
 
 if [[ $(uname -n) == "wilco" || $(uname -n) == "ctrl" ]]; then
-    export OBSD='/home/rwe/Documents/obsd'
+    export OBSD="$HOME/Documents/obsd"
     alias oo='nvim /home/rwe/Documents/obsd'
     alias or='nvim /home/rwe/Documents/obsd/inbox/*.md'
 fi
 
 if [[ $(uname -n) == "DTM017" ]]; then
-    export OBSD='/home/mrowe/Documents/obsd_h'
-    alias obsd="cd ~/Documents/obsd_h"
-    alias oo='nvim /home/mrowe/Documents/obsd_h'
-    alias or='nvim /home/mrowe/Documents/obsd_h/inbox/*.md'
-fi
-
-if [ "$ODR" = "work" ]; then
-    export OBSD='/home/mrowe/Documents/obsd_w'
-    alias oo='nvim /home/mrowe/Documents/obsd_w'
-    alias or='nvim /home/mrowe/Documents/obsd_w/inbox/*.md'
+    export OBSD="$HOME/Documents/obsd"
+    alias oo='nvim /home/mrowe/Documents/obsd'
+    alias or='nvim /home/mrowe/Documents/obsd/inbox/*.md'
 fi
 
 # ----------------------------- functions ----------------------------

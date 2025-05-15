@@ -61,27 +61,23 @@ end
 --  if hostname is DTM017
 if vim.fn.hostname() == "DTM017" then
   -- navigate the vault
-  vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/docs/obsd_h<cr>")
-  vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_h<cr>")
-  vim.keymap.set(
-    "n",
-    "<leader>osr",
-    ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_h/notes/resources<cr>"
-  )
-  vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_h/notes/courses<cr>")
-  vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd_h<cr>")
+  vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/docs/obsd<cr>")
+  vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd<cr>")
+  vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/resources<cr>")
+  vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/courses<cr>")
+  vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd<cr>")
   -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_h/zettelkasten<cr>:bd<cr>")
+  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd/zettelkasten<cr>:bd<cr>")
 end
 
-local obsd_value = vim.fn.getenv "ODR"
-if obsd_value == "work" then
-  vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/docs/obsd_w<cr>")
-  vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_w<cr>")
-  vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd_w<cr>")
-  -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_w/zettelkasten<cr>:bd<cr>")
-end
+-- local obsd_value = vim.fn.getenv "ODR"
+-- if obsd_value == "work" then
+--   vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/docs/obsd_w<cr>")
+--   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd_w<cr>")
+--   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd_w<cr>")
+--   -- move file in current buffer to zettelkasten folder
+--   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_w/zettelkasten<cr>:bd<cr>")
+-- end
 
 -- convert note to note template and remove leading white space
 vim.keymap.set("n", "<leader>on", ":ObsidianTemplate note<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>")
