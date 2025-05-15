@@ -66,6 +66,7 @@ if vim.fn.hostname() == "DTM017" then
   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd<cr>")
   vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/resources<cr>")
   vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/courses<cr>")
+  vim.keymap.set("n", "<leader>osw", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/work<cr>")
   vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd<cr>")
   -- move file in current buffer to zettelkasten folder
   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd/zettelkasten<cr>:bd<cr>")
