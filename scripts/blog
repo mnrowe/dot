@@ -62,7 +62,7 @@ case "$1" in
 # 	get_filename
 #
 # 	# Call the function to create and open the file in the specified directory
-# 	open_file "$HOME/projects/blog/content/zet" "zet"
+# 	open_file "$REPOS/projects/blog/content/zet" "zet"
 #
 # 	;;
 post)
@@ -70,12 +70,12 @@ post)
 	get_filename
 
 	# Call the function to create and open the file in the specified directory
-	open_file "$HOME/projects/blog/content/posts" "posts"
+	open_file "$REPOS/blog/content/posts" "posts"
 	;;
 
 reset)
-	rm -rf "$HOME/projects/blog/public"
-	cd "$HOME/projects/blog/" || exit
+	rm -rf "$REPOS/blog/public"
+	cd "$REPOS/blog/" || exit
 	hugo
 	hugo server --disableFastRender
 	;;
@@ -90,14 +90,14 @@ pub)
 		read -p "Enter tags, or press enter to post without tags: " tags
 	fi
 
-	cd "$HOME/projects/blog/" || exit
-	rm -rf "$HOME/projects/blog/public"
+	cd "$REPOS/projects/blog/" || exit
+	rm -rf "$REPOS/blog/public"
 	hugo
 	git add .
 	git commit -m "$commitmessage"
 	git push
 	rm -rf "$HOSTING_REPO*"
-	cp -r "$HOME"/projects/blog/public/* "$HOSTING_REPO"
+	cp -r "$REPOS"/projects/blog/public/* "$HOSTING_REPO"
 	cd "$HOSTING_REPO" || exit
 	git add .
 	git commit -m "$commitmessage"
@@ -120,7 +120,7 @@ pub)
 
 "")
 	# Change to the websites/blog directory if no argument was given
-	cd "$HOME/projects/blog" || exit
+	cd "$REPOS/blog" || exit
 	;;
 
 *)
