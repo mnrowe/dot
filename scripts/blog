@@ -1,61 +1,131 @@
 #!/bin/bash
 
-# A bash script that helps me create notes in my second brain
-# based on my "blog" script
-# TODO
-# 1. check if file already exists
-# 2. write this in Go :)
+# A bash script that helps me create notes for my blog
+# by running 'blog zet' or 'blog article' a markdown file is created in the proper directory, with my chosen filename.
 
-# function to prompt the user for a filename
+HOSTING_REPO="$REPOS/blog/"
+
+# get_filename prompts the user for a filename
 get_filename() {
 	read -p "Enter a filename: " filename
-	echo "$filename"
 }
 
-# function to create and open a file in the specified directory
+# open_file creates and opens a file in the specified directory
 open_file() {
 
+	date=$(date +"%Y-%m-%d")
+	timestamp="$(date +"%Y%m%d%H%m")"
 	# Cd into the directory
 	cd "$1" || exit
 	# Create the file in the specified directory
 	touch "$1/$filename.md"
 
-	# format the file
-	{
-		echo "# "
-		echo -en "\n"
-		echo -en "\n"
-		echo -en "\n"
-		echo "Links:"
-		echo -en "\n"
-	} >>"$1/$filename.md"
+	# cd into second brain
+	cd "$SECOND_BRAIN" || exit
+
+	# Format the title by removing dashes
+	title=$filename
+	title="${title//-/ }"
+
+	# set up the yaml frontmatter
+	echo "---" >>"$1/$filename.md"
+	echo "title: $filename" >>"$1/$filename.md"
+	echo "date: $date" >>"$1/$filename.md"
+
+	if [[ $2 = "zet" ]]; then
+		echo "tags:" >>"$1/$filename.md"
+		echo "- " >>"$1/$filename.md"
+	fi
+
+	if [[ $2 = "article" ]]; then
+		echo "tags:" >>"$1/$filename.md"
+		echo "- Article" >>"$1/$filename.md"
+	fi
+
+	echo "---" >>"$1/$filename.md"
+	echo -en "\n" >>"$1/$filename.md"
+	echo -en "\n" >>"$1/$filename.md"
+	echo -en "\n" >>"$1/$filename.md"
+	echo "## Links:" >>"$1/$filename.md"
+	echo -en "\n" >>"$1/$filename.md"
+	echo "$timestamp" >>"$1/$filename.md"
 
 	# Open the file in Neovim
-	nvim '+ normal ggzzi' "$1/$filename.md"
+	nvim '+ normal 2GzzA' "$1/$filename.md" -c :NoNeckPain
+
 }
 
-# Prompt the user if no filename is provided
-if [[ $# -eq 0 ]]; then
-	filename=$(get_filename)
-fi
-
-# if more than one argument is given, print error message and stop script
-if [[ $# -gt 1 ]]; then
-	echo "Please provide only one filename separated by dashes, without .md extension."
-	echo "Example: note my-new-note"
-	exit 1
-fi
-
-# set filename to the argument given to the script
+# Check the value of the first parameter
 case "$1" in
-zet)
+# zet)
+# 	# Call the function to get the filename
+# 	get_filename
+#
+# 	# Call the function to create and open the file in the specified directory
+# 	open_file "$HOME/projects/blog/content/zet" "zet"
+#
+# 	;;
+post)
+	# Call the function to get the filename
 	get_filename
 
-	open_file "$HOME/Repos/blog/content/zet" "zet"
+	# Call the function to create and open the file in the specified directory
+	open_file "$HOME/projects/blog/content/posts" "posts"
 	;;
+
+reset)
+	rm -rf "$HOME/projects/blog/public"
+	cd "$HOME/projects/blog/" || exit
+	hugo
+	hugo server --disableFastRender
+	;;
+
+pub)
+	# ask for commit message, rebuild the site, push to blog repo, then push to hosting repo
+	read -p "Enter commit message: " commitmessage
+
+	read -p "Would you like to tweet + toot that? (y/n) " will_tweet
+
+	if [[ $will_tweet == [Yy]* ]]; then
+		read -p "Enter tags, or press enter to post without tags: " tags
+	fi
+
+	cd "$HOME/projects/blog/" || exit
+	rm -rf "$HOME/projects/blog/public"
+	hugo
+	git add .
+	git commit -m "$commitmessage"
+	git push
+	rm -rf "$HOSTING_REPO*"
+	cp -r "$HOME"/projects/blog/public/* "$HOSTING_REPO"
+	cd "$HOSTING_REPO" || exit
+	git add .
+	git commit -m "$commitmessage"
+	git push
+
+	if [[ $will_tweet == [Yy]* ]]; then
+		echo "Waiting 10 seconds to allow it to publish before tweeting."
+		sleep 10
+
+		# post to twitter/mastodon without tags
+		if [[ $tags == "" ]]; then
+			tweet
+			toot
+			exit
+		fi
+		tweet "$tags"
+		toot "$tags"
+	fi
+	;;
+
 "")
-	cd "$HOME/Repos/blog" || exit
+	# Change to the websites/blog directory if no argument was given
+	cd "$HOME/projects/blog" || exit
 	;;
+
 *)
-	echo "Error invalid parameter. Use blog zet|article"
+	# Print an error message if the parameter was not "zet" or "article"
+	echo "Error: Invalid parameter. Usage: blog zet|article|pub"
+	;;
 esac
+
