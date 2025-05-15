@@ -14,7 +14,11 @@ return {
           workspaces = {
             {
               name = "Home",
-              path = "$HOME/Documents/osbd",
+              path = "$HOME/Documents/obsd",
+            },
+            {
+              name = "Work",
+              path = "$HOME/Documents/obsd_w",
             },
           },
           notes_subdir = "inbox",
@@ -70,7 +74,7 @@ return {
           workspaces = {
             {
               name = "Home",
-              path = "/home/rwe/Documents/obsd",
+              path = "$HOME/Documents/obsd",
             },
           },
           notes_subdir = "inbox",

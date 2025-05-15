@@ -61,7 +61,7 @@ end
 --  if hostname is DTM017
 if vim.fn.hostname() == "DTM017" then
   -- navigate the vault
-  vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/docs/obsd<cr>")
+  vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/Documents/obsd<cr>")
   vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd<cr>")
   vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/resources<cr>")
   vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/courses<cr>")

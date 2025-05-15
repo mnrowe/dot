@@ -13,8 +13,6 @@ fi
 if [[ $(uname -n) == "wilco" ]]; then
     cd "$HOME/Documents/obsd" || exit
 fi
-if [ "$ODR" = "work" ]; then
-    cd "$HOME/docs/obsd_w" || exit
-fi
+
 touch "inbox/${formatted_file_name}"
 nvim "inbox/${formatted_file_name}"
