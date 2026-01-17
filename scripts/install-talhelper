@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Variables
+REPO="budimanjojo/talhelper"
+INSTALL_DIR="/usr/local/bin"
+BIN_NAME="talhelper"
+
+# Ensure required tools are installed
+if ! command -v curl >/dev/null 2>&1; then
+  echo "curl is required. Install it with: sudo dnf install -y curl"
+  exit 1
+fi
+
+if ! command -v tar >/dev/null 2>&1; then
+  echo "tar is required. Install it with: sudo dnf install -y tar"
+  exit 1
+fi
+
+# Detect architecture
+ARCH="$(uname -m)"
+case "$ARCH" in
+  x86_64) ARCH="amd64" ;;
+  aarch64) ARCH="arm64" ;;
+  *)
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+esac
+
+# Get latest release tag from GitHub
+echo "Fetching latest talhelper release..."
+VERSION="$(curl -fsSL https://api.github.com/repos/${REPO}/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')"
+
+if [[ -z "$VERSION" ]]; then
+  echo "Failed to determine latest version"
+  exit 1
+fi
+
+echo "Latest version: $VERSION"
+
+# Download URL
+TARBALL="talhelper_Linux_${ARCH}.tar.gz"
+DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${TARBALL}"
+
+# Temporary working directory
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+echo "Downloading talhelper..."
+curl -fsSL "$DOWNLOAD_URL" -o "$TMP_DIR/$TARBALL"
+
+echo "Extracting..."
+tar -xzf "$TMP_DIR/$TARBALL" -C "$TMP_DIR"
+
+# Install
+echo "Installing to ${INSTALL_DIR} (requires sudo)..."
+sudo install -m 0755 "$TMP_DIR/$BIN_NAME" "${INSTALL_DIR}/${BIN_NAME}"
+
+# Verify
+echo "Verifying installation..."
+if command -v talhelper >/dev/null 2>&1; then
+  talhelper --version
+  echo "✅ talhelper installed successfully"
+else
+  echo "❌ Installation failed"
+  exit 1
+fi
+

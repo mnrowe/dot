@@ -32,6 +32,7 @@ export CLICOLOR=1
 export HRULEWIDTH=73
 export GOPATH="$HOME/.local/go"
 export GOBIN="$HOME/.local/bin"
+export CONTROL_PLANE_IP=192.168.5.104
 #export NVIM_SCREENKEY=1
 
 # gruvbox-material
