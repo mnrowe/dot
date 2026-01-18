@@ -10,11 +10,11 @@ cd "$HOME/Documents/obsd" || exit
 if [ "$1" = "work" ]; then
   file_name=$(echo "$2" | tr ' ' '-')
   formatted_file_name=$(date "+%Y-%m-%d")_${file_name}.md
-  touch "notes/work/${formatted_file_name}"
+  touch "work_notes/work/${formatted_file_name}"
   nvim "notes/work/${formatted_file_name}"
 else
   file_name=$(echo "$1" | tr ' ' '-')
   formatted_file_name=$(date "+%Y-%m-%d")_${file_name}.md
-  touch "inbox/${formatted_file_name}"
-  nvim "inbox/${formatted_file_name}"
+  touch "notes/${formatted_file_name}"
+  nvim "notes/${formatted_file_name}"
 fi

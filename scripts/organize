@@ -11,7 +11,7 @@
 
 VAULT_DIR="$HOME/Documents/obsd"
 
-SOURCE_DIR="zettelkasten"
+SOURCE_DIR="inbox"
 DEST_DIR="notes"
 
 

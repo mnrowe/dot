@@ -46,32 +46,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- Obsidian
-if vim.fn.hostname() == "wilco" or vim.fn.hostname() == "ctrl" then
-  -- navigate the vault
-  vim.keymap.set("n", "<leader>oo", ":cd /home/rwe/Documents/obsd<cr>")
-  -- search for files in full vault
-  vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd<cr>")
-  vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes/resources<cr>")
-  vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes/courses<cr>")
-  vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/rwe/Documents/obsd<cr>")
-  -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/rwe/Documents/obsd/zettelkasten/<cr>:bd<cr>")
-  vim.keymap.set("n", "<leader>ox", ":!rm '%:p'<cr>:bd<cr>")
-end
-
---  if hostname is DTM017
-if vim.fn.hostname() == "DTM017" then
-  -- navigate the vault
-  vim.keymap.set("n", "<leader>oo", ":cd /home/mrowe/Documents/obsd<cr>")
-  vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd<cr>")
-  vim.keymap.set("n", "<leader>osr", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/resources<cr>")
-  vim.keymap.set("n", "<leader>osc", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/courses<cr>")
-  vim.keymap.set("n", "<leader>osw", ":Telescope find_files search_dirs=/home/mrowe/Documents/obsd/notes/work<cr>")
-  vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/mrowe/Documents/obsd<cr>")
-  -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd/zettelkasten<cr>:bd<cr>")
-  vim.keymap.set("n", "<leader>ox", ":!rm '%:p'<cr>:bd<cr>")
-end
+-- navigate the vault
+vim.keymap.set("n", "<leader>oo", ":cd /home/rwe/Documents/obsd<cr>")
+-- search for files in full vault
+vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes<cr>")
+vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/rwe/Documents/obsd/notes<cr>")
+-- move file in current buffer to zettelkasten folder
+vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/rwe/Documents/obsd/notes/<cr>:bd<cr>")
+vim.keymap.set("n", "<leader>ox", ":!rm '%:p'<cr>:bd<cr>")
 
 -- local obsd_value = vim.fn.getenv "ODR"
 -- if obsd_value == "work" then
