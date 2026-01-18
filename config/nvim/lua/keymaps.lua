@@ -76,7 +76,7 @@ vim.keymap.set("n", "<leader>om", ":ObsidianTemplate monthly<cr> :lua vim.cmd([[
 vim.keymap.set("n", "<leader>ol", ":ObsidianBacklinks<cr>")
 -- strip date from note title and replace dashes with spaces
 -- must have cursor on title
-vim.keymap.set("n", "<leader>of", ":s/\\(# \\)[^_]*_/\\1/ | s/-/ /g<cr>")
+vim.keymap.set("n", "<leader>of", [[:s/\d\{10,13}// | s/-//g<CR>]])
 -- delete file in current buffer
 vim.keymap.set("n", "<leader>orm", ":!rm '%:p'<cr>:bd<cr>")
 
