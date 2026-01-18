@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+message="$*"
+test -z "$message" && message=save
+cd "$OBSD" || dot || cd obsd || (echo "Unable to cd into dot or obsd." >&2 && exit 1)
+git add -A .
+git commit -m "$message"
+if type push;then
+	push
+else
+	git push
+fi
+
