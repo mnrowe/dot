@@ -12,11 +12,51 @@ has_session() {
 }
 
 hydrate() {
-    if [ -f $2/.tmux-sessionizer ]; then
-        tmux send-keys -t $1 "source $2/.tmux-sessionizer" c-M
-    elif [ -f $HOME/.tmux-sessionizer ]; then
-        tmux send-keys -t $1 "source $HOME/.tmux-sessionizer" c-M
+    local session=$1
+    local dir=$2
+
+    # Obsidian: just one window called notes
+    if [[ "$dir" == *obsd* ]] || [[ "$dir" == *obsidian* ]]; then
+        tmux rename-window -t "$session:1" "notes"
+        tmux send-keys -t "$session:notes" "nvim ." Enter
+        return
     fi
+
+    # Default layout for all other projects:
+    #
+    # Window 1: code
+    # ┌─────────────┬─────────────┐
+    # │   Neovim    │ Claude Code │
+    # │   (60%)     │   (40%)     │
+    # └─────────────┴─────────────┘
+    #
+    # Window 2: git
+    # ┌───────────────────────────┐
+    # │  git diff watcher         │
+    # └───────────────────────────┘
+    #
+    # Window 3: terminal
+    # ┌───────────────────────────┐
+    # │  clean shell              │
+    # └───────────────────────────┘
+
+    # Window 1: code (neovim + claude)
+    tmux rename-window -t "$session:1" "code"
+    tmux set-option -t "$session:code" automatic-rename off
+    tmux send-keys -t "$session:code" "nvim +Neotree ." Enter
+    tmux split-window -h -t "$session:code" -c "$dir" -l 40%
+    tmux send-keys -t "$session:code.1" "claude" Enter
+    tmux select-pane -t "$session:code.0"
+
+    # Window 2: git
+    tmux new-window -t "$session" -n "git" -c "$dir"
+    tmux send-keys -t "$session:git" "watch -n 10 --color 'git diff --stat --color=always'" Enter
+
+    # Window 3: terminal
+    tmux new-window -t "$session" -n "terminal" -c "$dir"
+
+    # Focus back on code window
+    tmux select-window -t "$session:code"
 }
 
 if [[ $# -eq 1 ]]; then
@@ -35,8 +75,9 @@ selected_name=$(basename "$selected" | tr . _)
 tmux_running=$(pgrep tmux)
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux new-session -s $selected_name -c $selected
+    tmux new-session -ds $selected_name -c $selected
     hydrate $selected_name $selected
+    tmux attach-session -t $selected_name
     exit 0
 fi
 

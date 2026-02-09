@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Default hydration script for tmux-sessionizer
+# Window 1 (code): neovim + claude code side by side
+# Window 2 (git):  auto-refreshing git diff
+# Window 3 (term): plain terminal
+# Skipped for non-git dirs and the obsd session
+
+session_name=$(tmux display-message -p '#S')
+session_dir=$(tmux display-message -p '#{pane_current_path}')
+
+# Skip obsidian session
+if [[ "$session_name" == "obsd" ]]; then
+  return 0 2>/dev/null || exit 0
+fi
+
+# Skip non-git directories
+if ! git -C "$session_dir" rev-parse --is-inside-work-tree &>/dev/null; then
+  return 0 2>/dev/null || exit 0
+fi
+
+# Window 1 (code): neovim left, claude right
+tmux rename-window -t "$session_name:1" 'code'
+tmux split-window -h -l 35% -t "$session_name:code"
+tmux send-keys -t "$session_name:code.0" 'nvim .' C-m
+tmux send-keys -t "$session_name:code.1" 'claude' C-m
+tmux select-pane -t "$session_name:code.0"
+
+# Window 2 (git): auto-refreshing git diff
+tmux new-window -t "$session_name" -n 'git' -c "$session_dir"
+tmux send-keys -t "$session_name:git" 'watch -n 2 -c "git diff --stat && echo \"---\" && git diff"' C-m
+
+# Window 3 (term): plain terminal
+tmux new-window -t "$session_name" -n 'term' -c "$session_dir"
+
+# Focus back on the code window
+tmux select-window -t "$session_name:code"

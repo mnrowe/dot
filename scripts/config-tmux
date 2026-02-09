@@ -3,3 +3,5 @@
 dir="$(dirname "$(dirname "$(realpath "$0")")")/config/tmux"
 echo "$HOME/.tmux.conf -> $dir/tmux.conf"
 ln -sfn "$dir/tmux.conf" ~/.tmux.conf
+echo "$HOME/.tmux-sessionizer -> $dir/tmux-sessionizer-hydrate"
+ln -sfn "$dir/tmux-sessionizer-hydrate" ~/.tmux-sessionizer
