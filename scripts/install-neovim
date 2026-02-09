@@ -1,37 +1,33 @@
 #!/usr/bin/env bash
 
 install-neovim() {
-
 	if [[ $OSTYPE =~ ^darwin ]]; then
 		brew install neovim
 		return
 	fi
 
-	# windows (git bash)
 	if [[ $OSTYPE =~ ^msys ]]; then
 		winget install --id neovim.neovim
 		return
 	fi
 
-	# linux (old, but stable, no coc unfortunately)
-	if type apt-get &>/dev/null; then
-		curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-		sudo rm -rf /opt/nvim
-		sudo tar -C /opt -xzf nvim-linux64.tar.gz
-		return
-	fi
-	
-	# linux (old, but stable, no coc unfortunately)
-	if type dnf &>/dev/null; then
-		curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-		sudo rm -rf /opt/nvim
-		sudo tar -C /opt -xzf nvim-linux64.tar.gz
+	if type apt-get &>/dev/null || type dnf &>/dev/null; then
+		local arch
+		case "$(uname -m)" in
+			x86_64)  arch="x86_64" ;;
+			aarch64) arch="arm64" ;;
+			*) echo "Unsupported architecture: $(uname -m)"; return 1 ;;
+		esac
+		local tarball="nvim-linux-${arch}.tar.gz"
+		curl -fLO "https://github.com/neovim/neovim/releases/latest/download/${tarball}"
+		sudo rm -rf /opt/nvim-linux-x86_64 /opt/nvim-linux-arm64 /opt/nvim-linux64
+		sudo tar -C /opt -xzf "$tarball"
+		rm -f "$tarball"
 		return
 	fi
 
 	echo "OS unsupported by this installer: $OSTYPE"
-
 }
 
-type node || install-nodejs || exit 1
+type node &>/dev/null || install-nodejs || exit 1
 install-neovim

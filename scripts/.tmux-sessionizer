@@ -1,0 +1,26 @@
+# Clearview dev layout
+# Loaded automatically by tmux-sessionizer
+#
+# ┌──────────────────────┬─────────────────────┐
+# │                      │                     │
+# │                      │    Claude Code      │
+# │      Neovim          │                     │
+# │                      ├─────────────────────┤
+# │                      │  git diff --stat    │
+# │                      │  (auto-refreshes)   │
+# └──────────────────────┴─────────────────────┘
+#
+# Ctrl+a h/j/k/l  - move between panes
+# Ctrl+a z        - zoom/unzoom a pane
+
+# Right pane: claude
+tmux split-window -h -l 40%
+tmux send-keys "claude" Enter
+
+# Bottom-right: git diff watcher
+tmux split-window -v -l 25%
+tmux send-keys "watch -n 10 --color 'git diff --stat --color=always'" Enter
+
+# Go back to left pane and open neovim
+tmux select-pane -t 0
+tmux send-keys "nvim ." Enter
