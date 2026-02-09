@@ -18,7 +18,7 @@ hydrate() {
     # Obsidian: just one window called notes
     if [[ "$dir" == *obsd* ]] || [[ "$dir" == *obsidian* ]]; then
         tmux rename-window -t "$session:1" "notes"
-        tmux send-keys -t "$session:notes" "nvim ." Enter
+        tmux send-keys -t "$session:notes" "nvim +Neotree ." Enter
         return
     fi
 
