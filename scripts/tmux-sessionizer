@@ -32,7 +32,7 @@ hydrate() {
     #
     # Window 2: git
     # ┌───────────────────────────┐
-    # │  git diff watcher         │
+    # │  lazygit                  │
     # └───────────────────────────┘
     #
     # Window 3: terminal
@@ -50,7 +50,7 @@ hydrate() {
 
     # Window 2: git
     tmux new-window -t "$session" -n "git" -c "$dir"
-    tmux send-keys -t "$session:git" "watch -n 10 --color 'git diff --stat --color=always'" Enter
+    tmux send-keys -t "$session:git" "lazygit" Enter
 
     # Window 3: terminal
     tmux new-window -t "$session" -n "terminal" -c "$dir"
