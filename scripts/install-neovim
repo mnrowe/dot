@@ -11,7 +11,18 @@ install-neovim() {
 		return
 	fi
 
-	if type apt-get &>/dev/null || type dnf &>/dev/null; then
+	if type dnf &>/dev/null; then
+		sudo dnf install -y neovim
+		return
+	fi
+
+	if type apt-get &>/dev/null; then
+		sudo apt-get update
+		sudo apt-get install -y neovim
+		return
+	fi
+
+	if [[ $OSTYPE =~ ^linux ]]; then
 		local arch
 		case "$(uname -m)" in
 			x86_64)  arch="x86_64" ;;
