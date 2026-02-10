@@ -59,20 +59,20 @@ return {
     end
 
     -- Create vim commands for easy model switching
-    vim.api.nvim_create_user_command("99Haiku", function()
+    vim.api.nvim_create_user_command("AiHaiku", function()
       switch_model("claude-haiku-4-5")
     end, { desc = "Switch 99 to Haiku (cheapest)" })
 
-    vim.api.nvim_create_user_command("99Sonnet", function()
+    vim.api.nvim_create_user_command("AiSonnet", function()
       switch_model("claude-sonnet-4-5")
     end, { desc = "Switch 99 to Sonnet (balanced)" })
 
-    vim.api.nvim_create_user_command("99Opus", function()
+    vim.api.nvim_create_user_command("AiOpus", function()
       switch_model("claude-opus-4-6")
     end, { desc = "Switch 99 to Opus (most powerful)" })
 
     -- Show current model
-    vim.api.nvim_create_user_command("99Model", function()
+    vim.api.nvim_create_user_command("AiModel", function()
       local state = _99.__get_state()
       vim.notify("99: Current model is " .. state.model, vim.log.levels.INFO)
     end, { desc = "Show current 99 model" })
