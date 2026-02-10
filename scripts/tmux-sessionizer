@@ -1,4 +1,19 @@
 #!/usr/bin/env bash
+
+# Parse flags
+SKIP_HYDRATE=0
+while [[ "$1" == --* ]]; do
+    case "$1" in
+        --simple)
+            SKIP_HYDRATE=1
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
 switch_to() {
     if [[ -z $TMUX ]]; then
         tmux attach-session -t $1
@@ -59,7 +74,10 @@ hydrate() {
     tmux select-window -t "$session:code"
 }
 
-if [[ $# -eq 1 ]]; then
+if [[ $SKIP_HYDRATE -eq 1 ]]; then
+    # Simple mode: go straight to home directory
+    selected="$HOME"
+elif [[ $# -eq 1 ]]; then
     selected=$1
 else
     # If someone wants to make this extensible, i'll accept
@@ -76,14 +94,18 @@ tmux_running=$(pgrep tmux)
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
     tmux new-session -ds $selected_name -c $selected
-    hydrate $selected_name $selected
+    if [[ $SKIP_HYDRATE -eq 0 ]]; then
+        hydrate $selected_name $selected
+    fi
     tmux attach-session -t $selected_name
     exit 0
 fi
 
 if ! has_session $selected_name; then
     tmux new-session -ds $selected_name -c $selected
-    hydrate $selected_name $selected
+    if [[ $SKIP_HYDRATE -eq 0 ]]; then
+        hydrate $selected_name $selected
+    fi
 fi
 
 switch_to $selected_name
