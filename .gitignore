@@ -1,1 +1,11 @@
 lazy-lock.json
+
+# Secret files (even though they're stored outside the repo)
+.env
+.secrets
+*_secrets
+*_private
+*.key
+.bash_private
+.bash_personal
+.bash_work

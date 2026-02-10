@@ -366,3 +366,14 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
 eval "$(ssh-agent -s)"
+
+# Fix opencode to use baseline binary (portable across machines/node versions)
+if command -v opencode &>/dev/null; then
+  _opencode_real=$(readlink -f "$(command -v opencode)" 2>/dev/null)
+  if [ -n "$_opencode_real" ]; then
+    _opencode_dir=$(dirname "$_opencode_real")
+    _baseline_bin="$_opencode_dir/../node_modules/opencode-linux-x64-baseline/bin/opencode"
+    [ -x "$_baseline_bin" ] && export OPENCODE_BIN_PATH="$_baseline_bin"
+    unset _opencode_real _opencode_dir _baseline_bin
+  fi
+fi
