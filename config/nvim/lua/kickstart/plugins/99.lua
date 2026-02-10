@@ -10,7 +10,7 @@ return {
     _99.setup({
       -- Use Claude Code as the AI provider
       provider = _99.Providers.ClaudeCodeProvider,
-      model = "claude-haiku-4-5", -- Cheaper and faster than Sonnet
+      model = "haiku", -- Use short alias (automatically uses latest version)
 
       -- Logging configuration (helps with debugging)
       logger = {
@@ -60,15 +60,15 @@ return {
 
     -- Create vim commands for easy model switching
     vim.api.nvim_create_user_command("AiHaiku", function()
-      switch_model("claude-haiku-4-5")
-    end, { desc = "Switch 99 to Haiku (cheapest)" })
+      switch_model("haiku")
+    end, { desc = "Switch 99 to Haiku (cheapest, fastest)" })
 
     vim.api.nvim_create_user_command("AiSonnet", function()
-      switch_model("claude-sonnet-4-5")
+      switch_model("sonnet")
     end, { desc = "Switch 99 to Sonnet (balanced)" })
 
     vim.api.nvim_create_user_command("AiOpus", function()
-      switch_model("claude-opus-4-6")
+      switch_model("opus")
     end, { desc = "Switch 99 to Opus (most powerful)" })
 
     -- Show current model
@@ -79,15 +79,15 @@ return {
 
     -- Optional: Keybindings for quick switching
     vim.keymap.set("n", "<leader>9h", function()
-      switch_model("claude-haiku-4-5")
+      switch_model("haiku")
     end, { desc = "Model: Haiku" })
 
     vim.keymap.set("n", "<leader>9s", function()
-      switch_model("claude-sonnet-4-5")
+      switch_model("sonnet")
     end, { desc = "Model: Sonnet" })
 
     vim.keymap.set("n", "<leader>9o", function()
-      switch_model("claude-opus-4-6")
+      switch_model("opus")
     end, { desc = "Model: Opus" })
 
     vim.keymap.set("n", "<leader>9m", function()
