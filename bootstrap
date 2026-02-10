@@ -1,0 +1,249 @@
+#!/bin/sh
+#
+# 🚀 Dotfiles Bootstrap Script
+# Run this on a fresh box to set everything up
+#
+# Usage:
+#   ./bootstrap              # Interactive mode
+#   ./bootstrap --minimal    # Minimal install (essentials only)
+#   ./bootstrap --full       # Full install (everything)
+#   ./bootstrap --server     # Server profile (no GUI)
+#   ./bootstrap --desktop    # Desktop profile (with GUI tools)
+#
+
+set -e
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+export DOTFILES="$SCRIPT_DIR"
+
+# Source common functions
+# shellcheck source=scripts/lib/common.sh
+. "$SCRIPT_DIR/scripts/lib/common.sh"
+
+# Banner
+show_banner() {
+    cat << 'EOF'
+    ____        __  _____ __
+   / __ \____  / /_/ __(_) /__  _____
+  / / / / __ \/ __/ /_/ / / _ \/ ___/
+ / /_/ / /_/ / /_/ __/ / /  __(__  )
+/_____/\____/\__/_/ /_/_/\___/____/
+
+ Bootstrap Script - Set up a fresh box
+EOF
+    echo ""
+}
+
+# Installation profiles
+profile_minimal() {
+    log_info "Installing MINIMAL profile (essentials only)..."
+    install_essentials
+    configure_essentials
+}
+
+profile_full() {
+    log_info "Installing FULL profile (everything)..."
+    install_essentials
+    install_development
+    install_optional
+    configure_all
+}
+
+profile_server() {
+    log_info "Installing SERVER profile (no GUI)..."
+    install_essentials
+    install_development
+    configure_all
+}
+
+profile_desktop() {
+    log_info "Installing DESKTOP profile (with GUI)..."
+    install_essentials
+    install_development
+    install_gui
+    install_optional
+    configure_all
+}
+
+# Core installations
+install_essentials() {
+    log_step "Installing essential tools..."
+
+    # Run install scripts
+    run_if_exists "$SCRIPT_DIR/scripts/install/tmux"
+    run_if_exists "$SCRIPT_DIR/scripts/install/neovim"
+}
+
+install_development() {
+    log_step "Installing development tools..."
+
+    run_if_exists "$SCRIPT_DIR/scripts/install/nodejs"
+    run_if_exists "$SCRIPT_DIR/scripts/install/golang"
+    run_if_exists "$SCRIPT_DIR/scripts/install/ansible"
+}
+
+install_gui() {
+    log_step "Installing GUI tools..."
+
+    run_if_exists "$SCRIPT_DIR/scripts/install/wezterm"
+    run_if_exists "$SCRIPT_DIR/scripts/install/ubuntumono"
+}
+
+install_optional() {
+    log_step "Installing optional tools..."
+
+    run_if_exists "$SCRIPT_DIR/scripts/install/podman"
+}
+
+# Configuration
+configure_essentials() {
+    log_step "Configuring essential tools..."
+
+    run_if_exists "$SCRIPT_DIR/scripts/config/bash"
+    run_if_exists "$SCRIPT_DIR/scripts/config/tmux"
+    run_if_exists "$SCRIPT_DIR/scripts/config/nvim"
+    run_if_exists "$SCRIPT_DIR/scripts/config/scripts"
+}
+
+configure_all() {
+    log_step "Configuring all tools..."
+
+    # Run all config scripts
+    for script in "$SCRIPT_DIR"/scripts/config/*; do
+        if [ -x "$script" ]; then
+            run_script "$script"
+        fi
+    done
+}
+
+# Helper functions
+run_if_exists() {
+    local script="$1"
+    if [ -f "$script" ] && [ -x "$script" ]; then
+        run_script "$script"
+    else
+        log_warn "Script not found or not executable: $script"
+    fi
+}
+
+run_script() {
+    local script="$1"
+    local name
+    name="$(basename "$script")"
+
+    log_info "Running: $name"
+    if "$script"; then
+        log_success "Completed: $name"
+    else
+        log_error "Failed: $name"
+        return 1
+    fi
+}
+
+# Interactive mode
+interactive_mode() {
+    show_banner
+    log_info "Select installation profile:"
+    echo ""
+    echo "  1) Minimal    - Essential tools only (tmux, neovim, bash)"
+    echo "  2) Server     - Development tools (+ nodejs, golang, ansible)"
+    echo "  3) Desktop    - Full desktop setup (+ GUI tools)"
+    echo "  4) Full       - Everything"
+    echo "  5) Custom     - Choose what to install"
+    echo ""
+    printf "Enter choice [1-5]: "
+    read -r choice
+
+    case "$choice" in
+        1) profile_minimal ;;
+        2) profile_server ;;
+        3) profile_desktop ;;
+        4) profile_full ;;
+        5) custom_install ;;
+        *) log_error "Invalid choice"; exit 1 ;;
+    esac
+}
+
+custom_install() {
+    log_info "Custom installation mode"
+    echo ""
+    echo "Available install scripts:"
+    echo ""
+
+    local i=1
+    local scripts=""
+    for script in "$SCRIPT_DIR"/scripts/install/*; do
+        if [ -x "$script" ]; then
+            name="$(basename "$script")"
+            echo "  $i) $name"
+            scripts="$scripts $script"
+            i=$((i + 1))
+        fi
+    done
+
+    echo ""
+    printf "Enter numbers to install (space-separated, e.g. '1 2 4'): "
+    read -r selections
+
+    for num in $selections; do
+        script=$(echo "$scripts" | cut -d' ' -f"$num")
+        if [ -n "$script" ] && [ -f "$script" ]; then
+            run_script "$script"
+        fi
+    done
+
+    log_step "Running configuration scripts..."
+    configure_all
+}
+
+# Main execution
+main() {
+    # Parse arguments
+    case "${1:-}" in
+        --minimal|minimal)
+            show_banner
+            profile_minimal
+            ;;
+        --full|full)
+            show_banner
+            profile_full
+            ;;
+        --server|server)
+            show_banner
+            profile_server
+            ;;
+        --desktop|desktop)
+            show_banner
+            profile_desktop
+            ;;
+        --help|-h)
+            show_banner
+            echo "Usage: $0 [OPTION]"
+            echo ""
+            echo "Options:"
+            echo "  --minimal     Install essential tools only"
+            echo "  --server      Install server profile (no GUI)"
+            echo "  --desktop     Install desktop profile (with GUI)"
+            echo "  --full        Install everything"
+            echo "  --help        Show this help"
+            echo ""
+            echo "No option: Interactive mode"
+            exit 0
+            ;;
+        "")
+            interactive_mode
+            ;;
+        *)
+            log_error "Unknown option: $1"
+            echo "Run '$0 --help' for usage"
+            exit 1
+            ;;
+    esac
+
+    echo ""
+    log_success "Bootstrap complete! 🎉"
+    log_info "You may need to restart your shell for changes to take effect"
+}
+
+main "$@"
