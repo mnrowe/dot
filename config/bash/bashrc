@@ -181,9 +181,10 @@ __ps1() {
 		PS1="$short"
 	fi
 
-	if _have tmux && [[ -n "$TMUX" ]]; then
-		tmux rename-window "$(wd)"
-	fi
+	# Disabled: conflicts with manual window naming and tmux-resurrect
+	# if _have tmux && [[ -n "$TMUX" ]]; then
+	# 	tmux rename-window "$(wd)"
+	# fi
 }
 
 wd() {
