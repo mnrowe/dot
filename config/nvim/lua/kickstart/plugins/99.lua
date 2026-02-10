@@ -9,7 +9,7 @@ return {
 
     _99.setup({
       -- Use Claude Code as the AI provider
-      provider = _99.ClaudeCodeProvider,
+      provider = _99.Providers.ClaudeCodeProvider,
       model = "claude-sonnet-4-5",
 
       -- Logging configuration (helps with debugging)
@@ -20,17 +20,15 @@ return {
       },
 
       -- Completions: #rules and @files in the prompt buffer
-      completion = {
-        -- Configure @file completion
-        files = {
-          enabled = true,
-          max_file_size = 102400, -- bytes, skip files larger than this
-          max_files = 5000, -- cap on total discovered files
-        },
-
-        -- Use cmp for autocomplete
-        source = "cmp",
-      },
+      -- NOTE: Disabled for now since we're using blink.cmp instead of nvim-cmp
+      -- completion = {
+      --   files = {
+      --     enabled = true,
+      --     max_file_size = 102400,
+      --     max_files = 5000,
+      --   },
+      --   source = "cmp",
+      -- },
 
       -- Auto-add markdown files based on location
       md_files = {
