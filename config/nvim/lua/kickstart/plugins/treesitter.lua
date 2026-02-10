@@ -11,7 +11,12 @@ return {
       end
 
       configs.setup({
-        ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "markdown_inline", "query", "vim", "vimdoc" },
+        ensure_installed = {
+          "bash", "c", "diff", "html", "lua", "luadoc",
+          "markdown", "markdown_inline", "query", "vim", "vimdoc",
+          -- Web development
+          "javascript", "typescript", "tsx", "css", "svelte",
+        },
         auto_install = true,
         highlight = {
           enable = true,

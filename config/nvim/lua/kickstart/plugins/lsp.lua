@@ -80,6 +80,9 @@ return {
         -- pyright = {},
         -- rust_analyzer = {},
         -- ts_ls = {},
+
+        -- Web development
+        svelte = {}, -- Svelte language server
       }
 
       -- Ensure the servers and tools above are installed
@@ -89,6 +92,8 @@ return {
         'stylua', -- Used to format Lua code
         'yamllint', -- YAML linter
         'yaml-language-server', -- YAML LSP with schema validation
+        'svelte-language-server', -- Svelte LSP
+        'prettier', -- Formatter for JS/TS/Svelte/CSS
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
