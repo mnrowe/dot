@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
 
 install-tmux() {
+	local install_cmd
 
-	if [[ $OSTYPE =~ ^darwin ]]; then
-		brew install tmux
-		return
+	# macOS
+	if [[ "$OSTYPE" == darwin* ]]; then
+		command -v brew &>/dev/null && brew install tmux && return
+		echo "Homebrew not found. Please install Homebrew first." >&2
+		return 1
 	fi
 
-	if [[ $OSTYPE =~ ^msys ]]; then
-		echo "There is no tmux for MSYS2 or Git Bash"
-		return
-	fi
-	# windows (git bash)
-	if type apt-get &>/dev/null; then
-		sudo apt-get install -y tmux
-		return
+	# Windows (Git Bash/MSYS2)
+	if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == cygwin* ]] || [[ "$OSTYPE" == win32 ]]; then
+		echo "tmux is not available for Windows (MSYS2/Git Bash)" >&2
+		return 1
 	fi
 
-	echo "OS unsupported by this installer: $OSTYPE"
+	# Linux distributions
+	if command -v apt-get &>/dev/null; then
+		sudo apt-get update && sudo apt-get install -y tmux && return
+	elif command -v dnf &>/dev/null; then
+		sudo dnf install -y tmux && return
+	elif command -v yum &>/dev/null; then
+		sudo yum install -y tmux && return
+	elif command -v pacman &>/dev/null; then
+		sudo pacman -S --noconfirm tmux && return
+	elif command -v zypper &>/dev/null; then
+		sudo zypper install -y tmux && return
+	fi
 
+	echo "Error: Unsupported OS or package manager not found: $OSTYPE" >&2
+	return 1
 }
 
 install-tmux

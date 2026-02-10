@@ -9,11 +9,11 @@ return {
   },
   config = true,
   keys = {
-    { "<leader>gs", ":Neogit<cr>", desc = "Neogit status" },
-    { "<leader>gc", ":Neogit commit<cr>", desc = "Neogit commit" },
-    { "<leader>gp", ":Neogit pull<cr>", desc = "Neogit pull" },
-    { "<leader>gP", ":Neogit push<cr>", desc = "Neogit push" },
-    { "<leader>gb", ":Telescope git_branches<cr>", desc = "Telescope Git Branches" },
-    { "<leader>gB", ":G blame<cr>", desc = "Git Blame" },
+    { "<leader>gs", ":Neogit<cr>", desc = "Status" },
+    { "<leader>gc", ":Neogit commit<cr>", desc = "Commit" },
+    { "<leader>gp", ":Neogit pull<cr>", desc = "Pull" },
+    { "<leader>gP", ":Neogit push<cr>", desc = "Push" },
+    { "<leader>gb", ":Telescope git_branches<cr>", desc = "Branches" },
+    { "<leader>gB", ":G blame<cr>", desc = "Blame" },
   },
 }

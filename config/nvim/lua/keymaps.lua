@@ -56,14 +56,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- Obsidian
--- navigate the vault
-vim.keymap.set("n", "<leader>oo", ":cd /home/rwe/Documents/obsd<cr>")
--- search for files in full vault
-vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes<cr>")
-vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/rwe/Documents/obsd/notes<cr>")
--- move file in current buffer to zettelkasten folder
-vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/rwe/Documents/obsd/notes/<cr>:bd<cr>")
-vim.keymap.set("n", "<leader>ox", ":!rm '%:p'<cr>:bd<cr>")
+vim.keymap.set("n", "<leader>oo", ":cd /home/rwe/Documents/obsd<cr>", { desc = "Open vault" })
+vim.keymap.set("n", "<leader>os", ":Telescope find_files search_dirs=/home/rwe/Documents/obsd/notes<cr>", { desc = "Search files" })
+vim.keymap.set("n", "<leader>oz", ":Telescope live_grep search_dirs=/home/rwe/Documents/obsd/notes<cr>", { desc = "Search content" })
+vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/rwe/Documents/obsd/notes/<cr>:bd<cr>", { desc = "Move to zettelkasten" })
+vim.keymap.set("n", "<leader>ox", ":!rm '%:p'<cr>:bd<cr>", { desc = "Delete file" })
 
 -- local obsd_value = vim.fn.getenv "ODR"
 -- if obsd_value == "work" then
@@ -74,20 +71,14 @@ vim.keymap.set("n", "<leader>ox", ":!rm '%:p'<cr>:bd<cr>")
 --   vim.keymap.set("n", "<leader>ok", ":!mv '%:p' /home/mrowe/Documents/obsd_w/zettelkasten<cr>:bd<cr>")
 -- end
 
--- convert note to note template and remove leading white space
-vim.keymap.set("n", "<leader>on", ":ObsidianTemplate note<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>")
--- convert note to daily template and remove leading white space
-vim.keymap.set("n", "<leader>od", ":ObsidianTemplate daily<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>")
--- convert note to daily template and remove leading white space
-vim.keymap.set("n", "<leader>ow", ":ObsidianTemplate weekly<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>")
--- convert note to daily template and remove leading white space
-vim.keymap.set("n", "<leader>om", ":ObsidianTemplate monthly<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>")
--- check obsidian backlinks on a note
-vim.keymap.set("n", "<leader>ol", ":ObsidianBacklinks<cr>")
--- strip date from note title and replace dashes with spaces
--- must have cursor on title
-vim.keymap.set("n", "<leader>of", [[:s/\d\{10,13}// | s/-//g<CR>]])
--- delete file in current buffer
-vim.keymap.set("n", "<leader>orm", ":!rm '%:p'<cr>:bd<cr>")
+-- Templates
+vim.keymap.set("n", "<leader>on", ":ObsidianTemplate note<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>", { desc = "Template: Note" })
+vim.keymap.set("n", "<leader>od", ":ObsidianTemplate daily<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>", { desc = "Template: Daily" })
+vim.keymap.set("n", "<leader>ow", ":ObsidianTemplate weekly<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>", { desc = "Template: Weekly" })
+vim.keymap.set("n", "<leader>om", ":ObsidianTemplate monthly<cr> :lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>", { desc = "Template: Monthly" })
+-- Other Obsidian functions
+vim.keymap.set("n", "<leader>ol", ":ObsidianBacklinks<cr>", { desc = "Show backlinks" })
+vim.keymap.set("n", "<leader>of", [[:s/\d\{10,13}// | s/-//g<CR>]], { desc = "Format title" })
+vim.keymap.set("n", "<leader>orm", ":!rm '%:p'<cr>:bd<cr>", { desc = "Delete file" })
 
 -- vim: ts=2 sts=2 sw=2 et
