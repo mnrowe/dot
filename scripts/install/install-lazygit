@@ -17,30 +17,45 @@ install-lazygit() {
 	if type apt &>/dev/null; then
 		echo "Installing via apt..."
 		sudo apt update
-		sudo apt install -y lazygit
-		return
+		if sudo apt install -y lazygit 2>/dev/null; then
+			return
+		else
+			echo "lazygit not available in apt repositories, trying alternative method..."
+		fi
 	fi
 
 	if type dnf &>/dev/null; then
 		echo "Installing via dnf..."
-		sudo dnf install -y lazygit
-		return
+		if sudo dnf install -y lazygit 2>/dev/null; then
+			return
+		else
+			echo "lazygit not available in dnf repositories, trying alternative method..."
+		fi
 	fi
 
 	if type pacman &>/dev/null; then
 		echo "Installing via pacman..."
-		sudo pacman -S --noconfirm lazygit
-		return
+		if sudo pacman -S --noconfirm lazygit 2>/dev/null; then
+			return
+		else
+			echo "lazygit not available in pacman repositories, trying alternative method..."
+		fi
 	fi
 
 	if type paru &>/dev/null; then
-		paru -S --noconfirm lazygit
-		return
+		if paru -S --noconfirm lazygit 2>/dev/null; then
+			return
+		else
+			echo "lazygit not available in paru repositories, trying alternative method..."
+		fi
 	fi
 
 	if type yay &>/dev/null; then
-		yay -S --noconfirm lazygit
-		return
+		if yay -S --noconfirm lazygit 2>/dev/null; then
+			return
+		else
+			echo "lazygit not available in yay repositories, trying alternative method..."
+		fi
 	fi
 
 	# Fallback: install from GitHub releases

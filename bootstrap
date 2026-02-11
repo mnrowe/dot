@@ -10,8 +10,6 @@
 #   ./bootstrap --desktop    # Desktop profile (everything including GUI tools)
 #
 
-set -e
-
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 export DOTFILES="$SCRIPT_DIR"
@@ -44,14 +42,17 @@ profile_minimal() {
 profile_server() {
     log_info "Installing SERVER profile (no GUI)..."
     install_essentials
-    install_tools
+    install_dev_tools
+    install_cli_tools
     configure_all
 }
 
 profile_desktop() {
     log_info "Installing DESKTOP profile (everything)..."
     install_essentials
-    install_tools
+    install_dev_tools
+    install_cli_tools
+    install_gui_tools
     install_optional
     configure_all
 }
@@ -65,20 +66,30 @@ install_essentials() {
     run_if_exists "$SCRIPT_DIR/scripts/install/install-neovim"
 }
 
-install_tools() {
-    log_step "Installing tools..."
+install_dev_tools() {
+    log_step "Installing development tools..."
 
-    # Development tools
+    # Programming languages and build tools
     run_if_exists "$SCRIPT_DIR/scripts/install/install-nodejs"
     run_if_exists "$SCRIPT_DIR/scripts/install/install-golang"
     run_if_exists "$SCRIPT_DIR/scripts/install/install-ansible"
+}
+
+install_cli_tools() {
+    log_step "Installing CLI tools..."
+
+    # Git and terminal tools
     run_if_exists "$SCRIPT_DIR/scripts/install/install-lazygit"
-    
-    # Terminal/AI tools
+
+    # AI/Editor tools
     run_if_exists "$SCRIPT_DIR/scripts/install/install-opencode"
     run_if_exists "$SCRIPT_DIR/scripts/install/install-claude"
-    
-    # GUI tools (will skip if not available)
+}
+
+install_gui_tools() {
+    log_step "Installing GUI tools..."
+
+    # Terminal emulator and fonts
     run_if_exists "$SCRIPT_DIR/scripts/install/install-wezterm"
     run_if_exists "$SCRIPT_DIR/scripts/install/install-ubuntumono"
 }
@@ -128,8 +139,10 @@ run_script() {
     log_info "Running: $name"
     if "$script"; then
         log_success "Completed: $name"
+        return 0
     else
         log_error "Failed: $name"
+        # Continue with other scripts instead of failing entirely
         return 1
     fi
 }
@@ -139,9 +152,9 @@ interactive_mode() {
     show_banner
     log_info "Select installation profile:"
     echo ""
-    echo "  1) Minimal    - Essentials: tmux, neovim, bash"
-    echo "  2) Server     - Dev tools: nodejs, golang, ansible, lazygit, opencode, claude"
-    echo "  3) Desktop    - Everything: server tools + wezterm, fonts, podman"
+    echo "  1) Minimal    - Essentials: tmux, neovim"
+    echo "  2) Server     - Minimal + dev tools (nodejs, golang, ansible, lazygit, AI tools)"
+    echo "  3) Desktop    - Server + GUI tools (wezterm, fonts, podman)"
     echo "  4) Custom     - Choose what to install"
     echo ""
     printf "Enter choice [1-4]: "
@@ -152,7 +165,10 @@ interactive_mode() {
         2) profile_server ;;
         3) profile_desktop ;;
         4) custom_install ;;
-        *) log_error "Invalid choice"; exit 1 ;;
+        *)
+            log_error "Invalid choice"
+            exit 1
+            ;;
     esac
 }
 
@@ -163,12 +179,14 @@ custom_install() {
     echo ""
 
     local i=1
-    local scripts=""
+    local script_list=""
     for script in "$SCRIPT_DIR"/scripts/install/*; do
         if [ -x "$script" ]; then
             name="$(basename "$script")"
             echo "  $i) $name"
-            scripts="$scripts $script"
+            # Use newline as separator to avoid index issues
+            script_list="${script_list}${script}
+"
             i=$((i + 1))
         fi
     done
@@ -178,9 +196,12 @@ custom_install() {
     read -r selections
 
     for num in $selections; do
-        script=$(echo "$scripts" | cut -d' ' -f"$num")
+        # Extract the nth line from script_list
+        script=$(echo "$script_list" | sed -n "${num}p")
         if [ -n "$script" ] && [ -f "$script" ]; then
             run_script "$script"
+        else
+            log_warn "Invalid selection: $num"
         fi
     done
 
@@ -209,9 +230,9 @@ main() {
             echo "Usage: $0 [OPTION]"
             echo ""
             echo "Options:"
-            echo "  --minimal     Install essential tools only (tmux, nvim, bash)"
-            echo "  --server      Server profile (dev tools: node, go, ansible, lazygit, ai tools)"
-            echo "  --desktop     Desktop profile (everything including wezterm, fonts)"
+            echo "  --minimal     Install essential tools only (tmux, nvim)"
+            echo "  --server      Server profile (minimal + dev tools, CLI only, no GUI)"
+            echo "  --desktop     Desktop profile (server + GUI tools: wezterm, fonts)"
             echo "  --help        Show this help"
             echo ""
             echo "No option: Interactive mode"
