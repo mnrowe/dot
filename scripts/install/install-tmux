@@ -18,15 +18,15 @@ install-tmux() {
 
 	# Linux distributions
 	if command -v apt-get &>/dev/null; then
-		sudo apt-get update && sudo apt-get install -y tmux && return
+		sudo apt-get update && sudo apt-get install -y tmux xclip && return
 	elif command -v dnf &>/dev/null; then
-		sudo dnf install -y tmux && return
+		sudo dnf install -y tmux xclip && return
 	elif command -v yum &>/dev/null; then
-		sudo yum install -y tmux && return
+		sudo yum install -y tmux xclip && return
 	elif command -v pacman &>/dev/null; then
-		sudo pacman -S --noconfirm tmux && return
+		sudo pacman -S --noconfirm tmux xclip && return
 	elif command -v zypper &>/dev/null; then
-		sudo zypper install -y tmux && return
+		sudo zypper install -y tmux xclip && return
 	fi
 
 	echo "Error: Unsupported OS or package manager not found: $OSTYPE" >&2
