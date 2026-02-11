@@ -156,18 +156,52 @@ __ps1() {
 		r='\[\e[31m\]' h='\[\e[34m\]' \
 		u='\[\e[33m\]' p='\[\e[34m\]' w='\[\e[35m\]' \
 		b='\[\e[36m\]' x='\[\e[0m\]' \
-		g="\[\033[38;2;90;82;76m\]"
+		g="\[\033[38;2;90;82;76m\]" \
+		y='\[\e[33m\]'  # yellow for git status
 
 	[[ $EUID == 0 ]] && P='#' && u=$r && p=$u # root
 	[[ $PWD = / ]] && dir=/
 	[[ $PWD = "$HOME" ]] && dir='~'
 
 	B=$(git branch --show-current 2>/dev/null)
-	[[ $dir = "$B" ]] && B=.
-	countme="$USER$PROMPT_AT$(hostname):$dir($B)\$ "
 
-	[[ $B == master || $B == main ]] && b="$r"
-	[[ -n "$B" ]] && B="$g($b$B$g)"
+	# Git status indicators
+	local git_status=""
+	if [[ -n "$B" ]]; then
+		[[ $dir = "$B" ]] && B=.
+
+		# Check for various git states
+		local staged unstaged untracked ahead behind
+
+		# Check if there are staged changes
+		git diff --cached --quiet 2>/dev/null || staged="+"
+
+		# Check if there are unstaged changes
+		git diff --quiet 2>/dev/null || unstaged="*"
+
+		# Check for untracked files
+		[[ -n $(git ls-files --others --exclude-standard 2>/dev/null) ]] && untracked="?"
+
+		# Check commits ahead/behind remote
+		local upstream=$(git rev-parse --abbrev-ref @{upstream} 2>/dev/null)
+		if [[ -n "$upstream" ]]; then
+			local counts=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
+			local ahead_count=$(echo "$counts" | cut -f1)
+			local behind_count=$(echo "$counts" | cut -f2)
+			[[ "$ahead_count" -gt 0 ]] && ahead="⇡${ahead_count}"
+			[[ "$behind_count" -gt 0 ]] && behind="⇣${behind_count}"
+		fi
+
+		# Combine all git status indicators
+		git_status="${staged}${unstaged}${untracked}${ahead}${behind}"
+		[[ -n "$git_status" ]] && git_status="${y}${git_status}${g}"
+
+		# Color branch name (red for main/master)
+		[[ $B == master || $B == main ]] && b="$r"
+		B="$g($b$B$git_status$g)"
+	fi
+
+	countme="$USER$PROMPT_AT$(hostname):$dir($B)\$ "
 
 	short="$u\u$g$PROMPT_AT$h\h$g:$w$dir$B$p$P$x "
 	long="${g}╔$u\u$g$PROMPT_AT$h\h$g:$w$dir$B\n${g}╚$p$P$x "
