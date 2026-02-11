@@ -1,16 +1,16 @@
 return {
   "ThePrimeagen/99",
   config = function()
-    local _99 = require("99")
+    local _99 = require "99"
 
     -- Get current working directory for logging
     local cwd = vim.uv.cwd()
     local basename = vim.fs.basename(cwd)
 
     -- Get OpenRouter API key from environment
-    local openrouter_api_key = vim.fn.getenv("OPENROUTER_API_KEY")
+    local openrouter_api_key = vim.fn.getenv "OPENROUTER_API_KEY"
 
-    _99.setup({
+    _99.setup {
       -- Use Claude Code as the AI provider (default)
       provider = _99.Providers.ClaudeCodeProvider,
       model = "haiku", -- Use short alias (automatically uses latest version)
@@ -37,7 +37,7 @@ return {
       md_files = {
         "AGENT.md",
       },
-    })
+    }
 
     -- Visual selection AI completion (only works in visual mode)
     vim.keymap.set("v", "<leader>9v", function()
@@ -76,8 +76,10 @@ return {
       -- Check if trying to use non-Claude model with ClaudeCodeProvider
       if state.provider == _99.Providers.ClaudeCodeProvider and not is_claude_model(model_name) then
         vim.notify(
-          "99: ERROR - Cannot use model '" .. model_name .. "' with ClaudeCodeProvider. "
-          .. "Only Anthropic models (haiku, sonnet, opus) are supported with your Pro subscription.",
+          "99: ERROR - Cannot use model '"
+            .. model_name
+            .. "' with ClaudeCodeProvider. "
+            .. "Only Anthropic models (haiku, sonnet, opus) are supported with your Pro subscription.",
           vim.log.levels.ERROR
         )
         return false
@@ -106,10 +108,7 @@ return {
           state.model = model_name
           vim.notify("99: Switched to Claude Code provider with " .. model_name, vim.log.levels.INFO)
         else
-          vim.notify(
-            "99: ERROR - Model '" .. model_name .. "' is not a valid Anthropic model",
-            vim.log.levels.ERROR
-          )
+          vim.notify("99: ERROR - Model '" .. model_name .. "' is not a valid Anthropic model", vim.log.levels.ERROR)
         end
       else
         vim.notify("99: Switched back to Claude Code provider", vim.log.levels.INFO)
@@ -119,31 +118,31 @@ return {
     -- Create vim commands for easy model switching
     vim.api.nvim_create_user_command("AiHaiku", function()
       switch_to_claude()
-      switch_model("haiku")
-    end, { desc = "Switch 99 to Haiku (cheapest, fastest)" })
+      switch_model "haiku"
+    end, { desc = "Switch 99 to Haiku (cheapest, fastest) via ClaudeCodeProvider" })
 
-    vim.api.nvim_create_user_command("AiSonnet", function()
+    vim.api.nvim_create_user_command("AiSonnet via ClaudeCodeProvider", function()
       switch_to_claude()
-      switch_model("sonnet")
-    end, { desc = "Switch 99 to Sonnet (balanced)" })
+      switch_model "sonnet"
+    end, { desc = "Switch 99 to Sonnet (balanced) via ClaudeCodeProvider" })
 
     vim.api.nvim_create_user_command("AiOpus", function()
       switch_to_claude()
-      switch_model("opus")
-    end, { desc = "Switch 99 to Opus (most powerful)" })
+      switch_model "opus"
+    end, { desc = "Switch 99 to Opus (most powerful) via ClaudeCodeProvider" })
 
-    -- OpenRouter kimi2.5 command
+    -- OpenRouter kimi2.5 command via OpenCodeProvider
     vim.api.nvim_create_user_command("AiKimi", function()
       if openrouter_api_key == "" or openrouter_api_key == vim.NIL then
         vim.notify("99: OPENROUTER_API_KEY not found in environment", vim.log.levels.ERROR)
         return
       end
 
-      local openrouter_provider = _99.Providers.OpenRouterProvider({
-        api_key = openrouter_api_key,
-      })
-
-      switch_provider_and_model(openrouter_provider, "moonshot/kimi-2.5-chat", "kimi 2.5 (OpenRouter)")
+      switch_provider_and_model(
+        _99.Providers.OpenCodeProvider,
+        "openrouter/moonshotai/kimi-k2.5",
+        "kimi 2.5 (OpenRouter)"
+      )
     end, { desc = "Switch 99 to kimi 2.5 via OpenRouter" })
 
     -- Show current model and provider
@@ -164,17 +163,17 @@ return {
     -- Optional: Keybindings for quick switching
     vim.keymap.set("n", "<leader>9h", function()
       switch_to_claude()
-      switch_model("haiku")
+      switch_model "haiku"
     end, { desc = "Model: Haiku" })
 
     vim.keymap.set("n", "<leader>9s", function()
       switch_to_claude()
-      switch_model("sonnet")
+      switch_model "sonnet"
     end, { desc = "Model: Sonnet" })
 
     vim.keymap.set("n", "<leader>9o", function()
       switch_to_claude()
-      switch_model("opus")
+      switch_model "opus"
     end, { desc = "Model: Opus" })
 
     vim.keymap.set("n", "<leader>9k", function()
@@ -183,11 +182,11 @@ return {
         return
       end
 
-      local openrouter_provider = _99.Providers.OpenRouterProvider({
-        api_key = openrouter_api_key,
-      })
-
-      switch_provider_and_model(openrouter_provider, "moonshot/kimi-2.5-chat", "kimi 2.5 (OpenRouter)")
+      switch_provider_and_model(
+        _99.Providers.OpenCodeProvider,
+        "openrouter/moonshotai/kimi-k2.5",
+        "kimi 2.5 (OpenRouter)"
+      )
     end, { desc = "Model: kimi 2.5" })
 
     vim.keymap.set("n", "<leader>9m", function()
@@ -225,7 +224,7 @@ return {
         model_short = "S"
       elseif model_short == "opus" then
         model_short = "O"
-      elseif model_short:match("kimi") then
+      elseif model_short:match "kimi" then
         model_short = "K"
       end
 
@@ -233,6 +232,6 @@ return {
     end
 
     -- Add to statusline (append to existing statusline)
-    vim.opt.statusline:append("%{%v:lua.get_99_status()%}")
+    vim.opt.statusline:append "%{%v:lua.get_99_status()%}"
   end,
 }
