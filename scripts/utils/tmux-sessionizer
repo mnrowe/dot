@@ -58,14 +58,14 @@ hydrate() {
     # ┌───────────────────────────┐
     # │  clean opencode             │
     # └───────────────────────────┘
-
-    # Window 1: code (neovim + claude)
-    tmux rename-window -t "$session:1" "code"
-    tmux set-option -t "$session:code" automatic-rename off
-    tmux send-keys -t "$session:code" "nvim +Neotree ." Enter
-    tmux split-window -h -t "$session:code" -c "$dir" -l 40%
-    tmux send-keys -t "$session:code.1" "claude" Enter
-    tmux select-pane -t "$session:code.0"
+    
+    # Window 1: claude (neovim + claude)
+    tmux rename-window -t "$session:1" "claude"
+    tmux set-option -t "$session:claude" automatic-rename off
+    tmux send-keys -t "$session:claude" "nvim +Neotree ." Enter
+    tmux split-window -h -t "$session:claude" -c "$dir" -l 40%
+    tmux send-keys -t "$session:claude.1" "claude" Enter
+    tmux select-pane -t "$session:claude.0"
 
     # Window 2: git
     tmux new-window -t "$session" -n "git" -c "$dir"
@@ -74,16 +74,15 @@ hydrate() {
     # Window 3: terminal
     tmux new-window -t "$session" -n "terminal" -c "$dir"
 
-    # Window 1: code (neovim + opencode)
-    tmux rename-window -t "$session:1" "code"
-    tmux set-option -t "$session:code" automatic-rename off
-    tmux send-keys -t "$session:code" "nvim +Neotree ." Enter
-    tmux split-window -h -t "$session:code" -c "$dir" -l 40%
-    tmux send-keys -t "$session:code.1" "claude" Enter
-    tmux select-pane -t "$session:code.0"
+    # Window 4: opencode (neovim + opencode)
+    tmux new-window -t "$session" -n "opencode" -c "$dir"
+    tmux send-keys -t "$session:opencode" "nvim +Neotree ." Enter
+    tmux split-window -h -t "$session:opencode" -c "$dir" -l 40%
+    tmux send-keys -t "$session:opencode.1" "opencode" Enter
+    tmux select-pane -t "$session:opencode.0"
 
-    # Focus back on code window
-    tmux select-window -t "$session:code"
+    # Focus back on claude window
+    tmux select-window -t "$session:claude"
 }
 
 if [[ $SKIP_HYDRATE -eq 1 ]]; then
