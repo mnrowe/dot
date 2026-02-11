@@ -75,7 +75,7 @@ hydrate() {
     tmux new-window -t "$session" -n "terminal" -c "$dir"
 
     # Windows 4: opencode
-    tmux new-window -t "$session" -n "opencode"
+    tmux new-window -t "$session" -n "opencode" Enter
 
     # Focus back on code window
     tmux select-window -t "$session:code"
