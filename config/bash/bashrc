@@ -393,9 +393,26 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-# Only start ssh-agent if not already running
-if _have ssh-agent && [ -z "$SSH_AGENT_PID" ] && [ -z "$SSH_AUTH_SOCK" ]; then
-    eval "$(ssh-agent -s)" >/dev/null 2>&1
+# Start or reuse existing ssh-agent
+SSH_AGENT_ENV="$HOME/.ssh/agent-env"
+
+start_ssh_agent() {
+    ssh-agent -s > "$SSH_AGENT_ENV"
+    chmod 600 "$SSH_AGENT_ENV"
+    . "$SSH_AGENT_ENV" > /dev/null
+    ssh-add
+}
+
+if _have ssh-agent; then
+    if [ -f "$SSH_AGENT_ENV" ]; then
+        . "$SSH_AGENT_ENV" > /dev/null
+        # Verify agent is still running
+        if ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+            start_ssh_agent
+        fi
+    else
+        start_ssh_agent
+    fi
 fi
 
 # Fix opencode to use baseline binary (portable across machines/node versions)
