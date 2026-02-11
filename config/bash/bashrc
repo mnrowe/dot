@@ -400,7 +400,10 @@ start_ssh_agent() {
     ssh-agent -s > "$SSH_AGENT_ENV"
     chmod 600 "$SSH_AGENT_ENV"
     . "$SSH_AGENT_ENV" > /dev/null
-    ssh-add
+    # Only add keys in interactive login shells to avoid hanging in subshells
+    if [[ $- == *i* ]] && shopt -q login_shell 2>/dev/null; then
+        ssh-add
+    fi
 }
 
 if _have ssh-agent; then
