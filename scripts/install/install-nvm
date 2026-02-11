@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+install-nvm() {
+	echo "Installing nvm (Node Version Manager)..."
+
+	# Check if nvm is already installed
+	if [ -d "$HOME/.nvm" ]; then
+		echo "nvm is already installed at $HOME/.nvm"
+		# Source nvm to check version
+		export NVM_DIR="$HOME/.nvm"
+		[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+		if type nvm &>/dev/null; then
+			echo "Current nvm version: $(nvm --version)"
+			return 0
+		fi
+	fi
+
+	# Install nvm using official install script
+	if type curl &>/dev/null; then
+		echo "Installing nvm via curl..."
+		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+	elif type wget &>/dev/null; then
+		echo "Installing nvm via wget..."
+		wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+	else
+		echo "Error: Neither curl nor wget is available"
+		echo "Please install curl or wget first"
+		return 1
+	fi
+
+	# Source nvm for current session
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+	if type nvm &>/dev/null; then
+		echo "nvm installed successfully: $(nvm --version)"
+		echo ""
+		echo "To use nvm in your current shell, run:"
+		echo "  export NVM_DIR=\"\$HOME/.nvm\""
+		echo "  [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\""
+		echo ""
+		echo "Or restart your shell."
+		return 0
+	else
+		echo "nvm installation may have failed"
+		return 1
+	fi
+}
+
+install-nvm

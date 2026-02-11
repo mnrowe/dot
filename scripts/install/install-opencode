@@ -23,24 +23,33 @@ install-opencode() {
 	# Check for npm (cross-platform option)
 	if type npm &>/dev/null; then
 		echo "Installing via npm..."
-		npm install -g opencode
-		return
+		if npm install -g opencode 2>/dev/null; then
+			return
+		else
+			echo "npm package not available, trying alternative method..."
+		fi
 	fi
 
 	# Arch Linux with paru
 	if type paru &>/dev/null; then
-		paru -S opencode
-		return
+		if paru -S --noconfirm opencode 2>/dev/null; then
+			return
+		else
+			echo "paru package not available, trying alternative method..."
+		fi
 	fi
 
 	# Arch Linux with yay
 	if type yay &>/dev/null; then
-		yay -S opencode
-		return
+		if yay -S --noconfirm opencode 2>/dev/null; then
+			return
+		else
+			echo "yay package not available, trying alternative method..."
+		fi
 	fi
 
 	# Fallback: use official install script
-	if [[ $OSTYPE =~ ^linux-gnu ]] || type curl &>/dev/null; then
+	if type curl &>/dev/null; then
 		echo "Installing via official install script..."
 		curl -fsSL https://opencode.ai/install | bash
 		return

@@ -1,24 +1,61 @@
 #!/usr/bin/env bash
 
 install-nodejs() {
+	echo "Installing Node.js (includes npm)..."
 
+	# Try to use nvm first (recommended method)
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+	if type nvm &>/dev/null; then
+		echo "Installing Node.js LTS via nvm..."
+		nvm install --lts
+		nvm use --lts
+		nvm alias default 'lts/*'
+
+		echo "Node.js installed successfully!"
+		echo "Node version: $(node --version)"
+		echo "npm version: $(npm --version)"
+		return 0
+	fi
+
+	# If nvm not available, suggest installing it
+	echo "nvm not found. Installing via nvm is recommended."
+	echo "Would you like to use system package manager instead? (not recommended)"
+
+	# Fallback to system package managers
 	if [[ $OSTYPE =~ ^darwin ]]; then
-		brew install nodejs
-		return
+		if type brew &>/dev/null; then
+			echo "Installing via Homebrew..."
+			brew install node
+			return 0
+		fi
 	fi
 
 	if [[ $OSTYPE =~ ^msys ]]; then
-		winget install --id openjs.nodejs
-		return
+		if type winget &>/dev/null; then
+			echo "Installing via winget..."
+			winget install --id OpenJS.NodeJS
+			return 0
+		fi
 	fi
 
-	if type apt-get &>/dev/null; then
-		sudo apt-get install -y nodejs
-		return
+	if type apt &>/dev/null; then
+		echo "Installing via apt..."
+		sudo apt update
+		if sudo apt install -y nodejs npm 2>/dev/null; then
+			return 0
+		else
+			echo "Failed to install via apt. Please install nvm first:"
+			echo "  Run: ./scripts/install/install-nvm"
+			return 1
+		fi
 	fi
 
-	echo "OS unsupported by this installer: $OSTYPE"
-
+	echo "No suitable installation method found."
+	echo "Please install nvm first:"
+	echo "  Run: ./scripts/install/install-nvm"
+	return 1
 }
 
 install-nodejs
