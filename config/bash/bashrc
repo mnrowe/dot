@@ -393,28 +393,28 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-# Start or reuse existing ssh-agent
-SSH_AGENT_ENV="$HOME/.ssh/agent-env"
+# Start or reuse existing ssh-agent (only in interactive login shells)
+# For subshells/tools, use the 'ssha' alias manually when needed
+if [[ $- == *i* ]] && shopt -q login_shell 2>/dev/null; then
+    SSH_AGENT_ENV="$HOME/.ssh/agent-env"
 
-start_ssh_agent() {
-    ssh-agent -s > "$SSH_AGENT_ENV"
-    chmod 600 "$SSH_AGENT_ENV"
-    . "$SSH_AGENT_ENV" > /dev/null
-    # Only add keys in interactive login shells to avoid hanging in subshells
-    if [[ $- == *i* ]] && shopt -q login_shell 2>/dev/null; then
-        ssh-add
-    fi
-}
-
-if _have ssh-agent; then
-    if [ -f "$SSH_AGENT_ENV" ]; then
+    start_ssh_agent() {
+        ssh-agent -s > "$SSH_AGENT_ENV"
+        chmod 600 "$SSH_AGENT_ENV"
         . "$SSH_AGENT_ENV" > /dev/null
-        # Verify agent is still running
-        if ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+        ssh-add
+    }
+
+    if _have ssh-agent; then
+        if [ -f "$SSH_AGENT_ENV" ]; then
+            . "$SSH_AGENT_ENV" > /dev/null
+            # Verify agent is still running
+            if ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+                start_ssh_agent
+            fi
+        else
             start_ssh_agent
         fi
-    else
-        start_ssh_agent
     fi
 fi
 
