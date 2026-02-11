@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+install-claude() {
+	echo "Installing Claude Code - Anthropic's AI coding assistant..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		if type brew &>/dev/null; then
+			echo "Installing via Homebrew..."
+			brew install claude-code
+		else
+			echo "Installing via npm..."
+			npm install -g @anthropic-ai/claude-code
+		fi
+		return
+	fi
+
+	if [[ $OSTYPE =~ ^msys ]]; then
+		echo "Installing via npm on Windows..."
+		npm install -g @anthropic-ai/claude-code
+		return
+	fi
+
+	# Check for npm (cross-platform option)
+	if type npm &>/dev/null; then
+		echo "Installing via npm..."
+		npm install -g @anthropic-ai/claude-code
+		return
+	fi
+
+	echo "OS unsupported by this installer: $OSTYPE"
+	echo "Please visit https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview for manual installation"
+	return 1
+}
+
+install-claude

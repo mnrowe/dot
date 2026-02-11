@@ -1,0 +1,7 @@
+#!/bin/sh
+
+dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/claude"
+
+echo "$HOME/.claude -> $dir"
+mkdir -p "$HOME/.config"
+ln -sfn "$dir" "$HOME/.claude"

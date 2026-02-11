@@ -89,6 +89,7 @@ install_gui() {
     run_if_exists "$SCRIPT_DIR/scripts/install/install-wezterm"
     run_if_exists "$SCRIPT_DIR/scripts/install/install-ubuntumono"
     run_if_exists "$SCRIPT_DIR/scripts/install/install-opencode"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-claude"
 }
 
 install_optional() {
