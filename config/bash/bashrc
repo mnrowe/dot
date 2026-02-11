@@ -359,7 +359,10 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-eval "$(ssh-agent -s)"
+# Only start ssh-agent if not already running
+if _have ssh-agent && [ -z "$SSH_AGENT_PID" ] && [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" >/dev/null 2>&1
+fi
 
 # Fix opencode to use baseline binary (portable across machines/node versions)
 if command -v opencode &>/dev/null; then
@@ -373,4 +376,7 @@ if command -v opencode &>/dev/null; then
 fi
 
 # opencode
-export PATH=/home/rwe/.opencode/bin:$PATH
+# Source opencode-specific env vars (doesn't affect Claude Code)
+[ -f ~/.config/opencode/.env ] && source ~/.config/opencode/.env
+
+export PATH=$HOME/.opencode/bin:$PATH
