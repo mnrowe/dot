@@ -1,7 +1,15 @@
 #!/bin/sh
 
 dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/lazygit"
+target="$HOME/.config/lazygit"
 
-echo "$HOME/.config/lazygit -> $dir"
+echo "$target -> $dir"
 mkdir -p "$HOME/.config"
-ln -sfn "$dir" "$HOME/.config/lazygit"
+
+# Handle existing directory/file
+if [ -e "$target" ] && [ ! -L "$target" ]; then
+    echo "Backing up existing $target to $target.backup"
+    mv "$target" "$target.backup"
+fi
+
+ln -sfn "$dir" "$target"
