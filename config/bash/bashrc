@@ -182,14 +182,16 @@ __ps1() {
 		# Check for untracked files
 		[[ -n $(git ls-files --others --exclude-standard 2>/dev/null) ]] && untracked="?"
 
-		# Check commits ahead/behind remote
-		local upstream=$(git rev-parse --abbrev-ref @{upstream} 2>/dev/null)
+		# Check commits ahead/behind remote (with timeout to prevent hanging)
+		local upstream=$(timeout 0.5s git rev-parse --abbrev-ref @{upstream} 2>/dev/null)
 		if [[ -n "$upstream" ]]; then
-			local counts=$(git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
-			local ahead_count=$(echo "$counts" | cut -f1)
-			local behind_count=$(echo "$counts" | cut -f2)
-			[[ "$ahead_count" -gt 0 ]] && ahead="⇡${ahead_count}"
-			[[ "$behind_count" -gt 0 ]] && behind="⇣${behind_count}"
+			local counts=$(timeout 0.5s git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null)
+			if [[ -n "$counts" ]]; then
+				local ahead_count=$(echo "$counts" | cut -f1)
+				local behind_count=$(echo "$counts" | cut -f2)
+				[[ "$ahead_count" -gt 0 ]] && ahead="⇡${ahead_count}"
+				[[ "$behind_count" -gt 0 ]] && behind="⇣${behind_count}"
+			fi
 		fi
 
 		# Combine all git status indicators
@@ -228,7 +230,8 @@ wd() {
 	echo "$parent/$dir"
 } && export wd
 
-PROMPT_COMMAND="__ps1"
+# Only set PROMPT_COMMAND in interactive shells to prevent hanging in subshells
+[[ $- == *i* ]] && PROMPT_COMMAND="__ps1"
 
 # ----------------------------- keyboard -----------------------------
 

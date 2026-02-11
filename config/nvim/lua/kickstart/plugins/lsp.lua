@@ -98,15 +98,17 @@ return {
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      -- Setup servers from the servers table using new vim.lsp.config API
+      -- Get lspconfig module
+      local lspconfig = require 'lspconfig'
+
+      -- Setup servers from the servers table using traditional lspconfig API
       for name, server in pairs(servers) do
         server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-        vim.lsp.config[name] = server
-        vim.lsp.enable(name)
+        lspconfig[name].setup(server)
       end
 
       -- YAML LSP with schema support (Kubernetes, docker-compose, etc.)
-      vim.lsp.config.yamlls = {
+      lspconfig.yamlls.setup {
         capabilities = capabilities,
         settings = {
           yaml = {
@@ -120,10 +122,9 @@ return {
           },
         },
       }
-      vim.lsp.enable('yamlls')
 
       -- Special Lua Config, as recommended by neovim help docs
-      vim.lsp.config.lua_ls = {
+      lspconfig.lua_ls.setup {
         capabilities = capabilities,
         on_init = function(client)
           if client.workspace_folders then
@@ -148,7 +149,6 @@ return {
           Lua = {},
         },
       }
-      vim.lsp.enable('lua_ls')
     end,
   },
 }
