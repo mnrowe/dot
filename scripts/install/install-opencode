@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+install-opencode() {
+	echo "Installing OpenCode AI - Open source AI coding assistant..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		if type brew &>/dev/null; then
+			brew tap opencode-ai/opencode
+			brew install opencode
+		else
+			# Use official install script
+			curl -fsSL https://opencode.ai/install | bash
+		fi
+		return
+	fi
+
+	if [[ $OSTYPE =~ ^msys ]]; then
+		# Windows: use official install script
+		curl -fsSL https://opencode.ai/install | bash
+		return
+	fi
+
+	# Check for npm (cross-platform option)
+	if type npm &>/dev/null; then
+		echo "Installing via npm..."
+		npm install -g opencode
+		return
+	fi
+
+	# Arch Linux with paru
+	if type paru &>/dev/null; then
+		paru -S opencode
+		return
+	fi
+
+	# Arch Linux with yay
+	if type yay &>/dev/null; then
+		yay -S opencode
+		return
+	fi
+
+	# Fallback: use official install script
+	if [[ $OSTYPE =~ ^linux ]] || type curl &>/dev/null; then
+		echo "Installing via official install script..."
+		curl -fsSL https://opencode.ai/install | bash
+		return
+	fi
+
+	echo "OS unsupported by this installer: $OSTYPE"
+	echo "Please visit https://opencode.ai/download for manual installation"
+	return 1
+}
+
+install-opencode
