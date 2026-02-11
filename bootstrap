@@ -5,9 +5,9 @@
 #
 # Usage:
 #   ./bootstrap              # Interactive mode
-#   ./bootstrap --minimal    # Minimal install (essentials only)
-#   ./bootstrap --server     # Server profile (no GUI tools)
-#   ./bootstrap --desktop    # Desktop profile (everything)
+#   ./bootstrap --minimal    # Minimal install (essentials only: tmux, nvim, bash)
+#   ./bootstrap --server     # Server profile (development tools, no GUI apps)
+#   ./bootstrap --desktop    # Desktop profile (everything including GUI tools)
 #
 
 set -e
@@ -139,9 +139,9 @@ interactive_mode() {
     show_banner
     log_info "Select installation profile:"
     echo ""
-    echo "  1) Minimal    - Essential tools only (tmux, neovim, bash)"
-    echo "  2) Server     - Server tools (+ nodejs, golang, ansible, lazygit)"
-    echo "  3) Desktop    - Everything (+ GUI tools, AI assistants)"
+    echo "  1) Minimal    - Essentials: tmux, neovim, bash"
+    echo "  2) Server     - Dev tools: nodejs, golang, ansible, lazygit, opencode, claude"
+    echo "  3) Desktop    - Everything: server tools + wezterm, fonts, podman"
     echo "  4) Custom     - Choose what to install"
     echo ""
     printf "Enter choice [1-4]: "
@@ -209,9 +209,9 @@ main() {
             echo "Usage: $0 [OPTION]"
             echo ""
             echo "Options:"
-            echo "  --minimal     Install essential tools only"
-            echo "  --server      Install server profile (no GUI tools)"
-            echo "  --desktop     Install desktop profile (everything)"
+            echo "  --minimal     Install essential tools only (tmux, nvim, bash)"
+            echo "  --server      Server profile (dev tools: node, go, ansible, lazygit, ai tools)"
+            echo "  --desktop     Desktop profile (everything including wezterm, fonts)"
             echo "  --help        Show this help"
             echo ""
             echo "No option: Interactive mode"
