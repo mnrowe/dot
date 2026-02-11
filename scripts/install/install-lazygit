@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+install-lazygit() {
+	echo "Installing lazygit - Simple terminal UI for git..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		if type brew &>/dev/null; then
+			echo "Installing via Homebrew..."
+			brew install lazygit
+		else
+			echo "Please install Homebrew first"
+			return 1
+		fi
+		return
+	fi
+
+	if type apt &>/dev/null; then
+		echo "Installing via apt..."
+		sudo apt update
+		sudo apt install -y lazygit
+		return
+	fi
+
+	if type dnf &>/dev/null; then
+		echo "Installing via dnf..."
+		sudo dnf install -y lazygit
+		return
+	fi
+
+	if type pacman &>/dev/null; then
+		echo "Installing via pacman..."
+		sudo pacman -S --noconfirm lazygit
+		return
+	fi
+
+	if type paru &>/dev/null; then
+		paru -S --noconfirm lazygit
+		return
+	fi
+
+	if type yay &>/dev/null; then
+		yay -S --noconfirm lazygit
+		return
+	fi
+
+	# Fallback: install from GitHub releases
+	if type curl &>/dev/null && type tar &>/dev/null; then
+		echo "Installing from GitHub releases..."
+		cd /tmp
+		LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+		curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+		tar xf lazygit.tar.gz lazygit
+		sudo install lazygit /usr/local/bin
+		rm lazygit.tar.gz lazygit
+		cd -
+		return
+	fi
+
+	echo "OS unsupported by this installer"
+	echo "Please visit https://github.com/jesseduffield/lazygit#installation for manual installation"
+	return 1
+}
+
+install-lazygit

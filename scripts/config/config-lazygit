@@ -1,0 +1,7 @@
+#!/bin/sh
+
+dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/lazygit"
+
+echo "$HOME/.config/lazygit -> $dir"
+mkdir -p "$HOME/.config"
+ln -sfn "$dir" "$HOME/.config/lazygit"
