@@ -1,3 +1,0 @@
-    # Window 4: opencode
-    tmux new-window -t "$session" -n "opencode" -c "$dir"
-    tmux send-keys -t "$session:opencode" "opencode" Enter
