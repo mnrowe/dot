@@ -25,10 +25,15 @@ log_warn() {
     printf "${YELLOW}[WARN]${NC} %s\n" "$1"
 }
 
-# Check if running as root or with sudo
+# Check if sudo is available for package installation
 if [ "$(id -u)" -ne 0 ]; then
-    log_error "This script must be run as root or with sudo"
-    exit 1
+    if ! command -v sudo >/dev/null 2>&1; then
+        log_error "This script requires sudo to install packages"
+        exit 1
+    fi
+    SUDO="sudo"
+else
+    SUDO=""
 fi
 
 # Detect OS
@@ -48,31 +53,31 @@ install_ansible() {
     case "$OS" in
         ubuntu|debian|pop)
             log_info "Detected $OS - Installing Ansible via PPA"
-            apt-get update -qq || { log_error "Failed to update package lists"; exit 1; }
-            apt-get install -y software-properties-common || { log_error "Failed to install software-properties-common"; exit 1; }
-            add-apt-repository --yes --update ppa:ansible/ansible || { log_error "Failed to add Ansible PPA"; exit 1; }
-            apt-get install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
-            activate-global-python-argcomplete3 || log_warn "Failed to activate argcomplete"
+            $SUDO apt-get update -qq || { log_error "Failed to update package lists"; exit 1; }
+            $SUDO apt-get install -y software-properties-common || { log_error "Failed to install software-properties-common"; exit 1; }
+            $SUDO add-apt-repository --yes --update ppa:ansible/ansible || { log_error "Failed to add Ansible PPA"; exit 1; }
+            $SUDO apt-get install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
+            $SUDO activate-global-python-argcomplete3 || log_warn "Failed to activate argcomplete"
             ;;
         rhel|centos|rocky|almalinux)
             log_info "Detected $OS - Installing Ansible via EPEL"
             if ! command -v ansible >/dev/null 2>&1; then
-                yum install -y epel-release || { log_error "Failed to install EPEL"; exit 1; }
-                yum install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
+                $SUDO yum install -y epel-release || { log_error "Failed to install EPEL"; exit 1; }
+                $SUDO yum install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
             fi
             ;;
         fedora)
             log_info "Detected Fedora - Installing Ansible via DNF"
-            dnf install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
+            $SUDO dnf install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
             ;;
         arch|manjaro)
             log_info "Detected $OS - Installing Ansible via Pacman"
-            pacman -Sy --noconfirm ansible python-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
+            $SUDO pacman -Sy --noconfirm ansible python-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
             ;;
         opensuse*|sles)
             log_info "Detected $OS - Installing Ansible via Zypper"
-            zypper refresh || { log_error "Failed to refresh repositories"; exit 1; }
-            zypper install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
+            $SUDO zypper refresh || { log_error "Failed to refresh repositories"; exit 1; }
+            $SUDO zypper install -y ansible python3-argcomplete || { log_error "Failed to install Ansible"; exit 1; }
             ;;
         *)
             log_error "Unsupported OS: $OS"

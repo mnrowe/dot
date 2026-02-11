@@ -54,6 +54,10 @@ hydrate() {
     # ┌───────────────────────────┐
     # │  clean shell              │
     # └───────────────────────────┘
+    # Window 4: opencode
+    # ┌───────────────────────────┐
+    # │  clean opencode             │
+    # └───────────────────────────┘
 
     # Window 1: code (neovim + claude)
     tmux rename-window -t "$session:1" "code"
@@ -69,6 +73,9 @@ hydrate() {
 
     # Window 3: terminal
     tmux new-window -t "$session" -n "terminal" -c "$dir"
+
+    # Windows 4: opencode
+    tmux new-window -t "$session" -n "opencode"
 
     # Focus back on code window
     tmux select-window -t "$session:code"

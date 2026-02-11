@@ -40,7 +40,7 @@ install-opencode() {
 	fi
 
 	# Fallback: use official install script
-	if [[ $OSTYPE =~ ^linux ]] || type curl &>/dev/null; then
+	if [[ $OSTYPE =~ ^linux-gnu ]] || type curl &>/dev/null; then
 		echo "Installing via official install script..."
 		curl -fsSL https://opencode.ai/install | bash
 		return

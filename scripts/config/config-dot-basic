@@ -3,11 +3,21 @@
 read -rp "Do you really want to reconfigure everything destructively? [y|N] " resp
 [[ ${resp,,} != y ]] && exit 0
 
-cd "$SCRIPTS" || cd dot/scripts || cd dotfiles/scripts || cd ../
-scripts=("config-scripts" "config-bash" "config-nvim" "config-tmux")
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+scripts=(
+  "$SCRIPT_DIR/config-scripts"
+  "$SCRIPT_DIR/config-bash"
+  "$SCRIPT_DIR/config-nvim"
+  "$SCRIPT_DIR/config-tmux"
+)
 
 for script in "${scripts[@]}"; do
-  echo "running: $script"
-  bash "$script"
+  # Skip if not executable
+  [[ ! -x "$script" ]] && continue
+
+  echo "running: $(basename "$script")"
+  "$script"
 done
 

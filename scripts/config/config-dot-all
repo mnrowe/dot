@@ -3,11 +3,18 @@
 read -rp "Do you really want to reconfigure everything destructively? [y|N] " resp
 [[ ${resp,,} != y ]] && exit 0
 
-cd "$DOTFILES" || cd dot || cd dotfiles || cd ../
-scripts=("$(find -type f -name 'config-*' ! -name 'config-dot-all' -exec basename  {} \; -exec test -x {} \; | tail -n +2)")
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-for script in $scripts; do
-  echo "running: $script"
-  bash "$script"
+# Find all config scripts except this one
+for script in "$SCRIPT_DIR"/config-*; do
+  # Skip this script itself
+  [[ "$(basename "$script")" == "config-dot-all" ]] && continue
+
+  # Skip if not executable
+  [[ ! -x "$script" ]] && continue
+
+  echo "running: $(basename "$script")"
+  "$script"
 done
 

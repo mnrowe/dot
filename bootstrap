@@ -71,40 +71,40 @@ install_essentials() {
     log_step "Installing essential tools..."
 
     # Run install scripts
-    run_if_exists "$SCRIPT_DIR/scripts/install/tmux"
-    run_if_exists "$SCRIPT_DIR/scripts/install/neovim"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-tmux"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-neovim"
 }
 
 install_development() {
     log_step "Installing development tools..."
 
-    run_if_exists "$SCRIPT_DIR/scripts/install/nodejs"
-    run_if_exists "$SCRIPT_DIR/scripts/install/golang"
-    run_if_exists "$SCRIPT_DIR/scripts/install/ansible"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-nodejs"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-golang"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-ansible"
 }
 
 install_gui() {
     log_step "Installing GUI tools..."
 
-    run_if_exists "$SCRIPT_DIR/scripts/install/wezterm"
-    run_if_exists "$SCRIPT_DIR/scripts/install/ubuntumono"
-    run_if_exists "$SCRIPT_DIR/scripts/install/opencode"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-wezterm"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-ubuntumono"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-opencode"
 }
 
 install_optional() {
     log_step "Installing optional tools..."
 
-    run_if_exists "$SCRIPT_DIR/scripts/install/podman"
+    run_if_exists "$SCRIPT_DIR/scripts/install/install-podman"
 }
 
 # Configuration
 configure_essentials() {
     log_step "Configuring essential tools..."
 
-    run_if_exists "$SCRIPT_DIR/scripts/config/bash"
-    run_if_exists "$SCRIPT_DIR/scripts/config/tmux"
-    run_if_exists "$SCRIPT_DIR/scripts/config/nvim"
-    run_if_exists "$SCRIPT_DIR/scripts/config/scripts"
+    run_if_exists "$SCRIPT_DIR/scripts/config/config-bash"
+    run_if_exists "$SCRIPT_DIR/scripts/config/config-tmux"
+    run_if_exists "$SCRIPT_DIR/scripts/config/config-nvim"
+    run_if_exists "$SCRIPT_DIR/scripts/config/config-scripts"
 }
 
 configure_all() {

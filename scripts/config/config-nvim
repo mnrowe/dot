@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dir="$(dirname "$(dirname "$(realpath "$0")")")/config/nvim"
+dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/nvim"
 
 echo "$HOME/.config/nvim -> $dir"
 ln -sfn "$dir" "$HOME/.config/nvim"

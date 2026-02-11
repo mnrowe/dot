@@ -248,7 +248,7 @@ _have "nvim" && set-editor nvim
 
 # ----------------------------- keybinds ----------------------------
 
-bind -x '"\C-f": tmux-sessionizer'
+bind -x '"\C-f": ~/.local/bin/scripts/utils/tmux-sessionizer'
 
 # ----------------------------- obsd ----------------------------
 
@@ -371,3 +371,6 @@ if command -v opencode &>/dev/null; then
     unset _opencode_real _opencode_dir _baseline_bin
   fi
 fi
+
+# opencode
+export PATH=/home/rwe/.opencode/bin:$PATH

@@ -1,5 +1,5 @@
 #!/bin/sh
 
-dir="$(dirname "$(dirname "$(realpath "$0")")")/config/i3"
+dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/i3"
 echo "$HOME/.config/i3 -> $dir"
 ln -sfn "$dir" "$HOME/.config/i3"

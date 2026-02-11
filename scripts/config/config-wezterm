@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 config-wezterm() {
-	dir="$(dirname "$(dirname "$(realpath "$0")")")/config/wezterm"
+	dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/wezterm"
 	target=~/.wezterm.lua
 
 	if [[ $OSTYPE =~ ^msys ]]; then
