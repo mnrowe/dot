@@ -1,7 +1,0 @@
-    # Window 1: code (neovim + opencode)
-    tmux rename-window -t "$session:1" "code"
-    tmux set-option -t "$session:code" automatic-rename off
-    tmux send-keys -t "$session:code" "nvim +Neotree ." Enter
-    tmux split-window -h -t "$session:code" -c "$dir" -l 40%
-    tmux send-keys -t "$session:code.1" "opencode" Enter
-    tmux select-pane -t "$session:code.0"
