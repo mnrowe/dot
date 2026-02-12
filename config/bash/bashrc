@@ -29,6 +29,7 @@ export HELP_BROWSER=w3m
 export DOCUMENTS="$HOME/Documents"
 export DOWNLOADS="$HOME/Downloads"
 export CLICOLOR=1
+export COLORTERM=truecolor
 export HRULEWIDTH=73
 export GOPATH="$HOME/.local/go"
 export GOBIN="$HOME/.local/bin"
