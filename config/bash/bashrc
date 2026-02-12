@@ -233,6 +233,10 @@ wd() {
 # Only set PROMPT_COMMAND in interactive shells to prevent hanging in subshells
 [[ $- == *i* ]] && PROMPT_COMMAND="__ps1"
 
+# Workaround for broken Nix installation - prevent 'n' command error
+# by unsetting any NIX-related command_not_found handlers
+unset -f command_not_found_handle_nix 2>/dev/null
+
 # ----------------------------- keyboard -----------------------------
 
 # only works if you have X and are using graphic Linux desktop
@@ -422,12 +426,15 @@ if [[ $- == *i* ]] && shopt -q login_shell 2>/dev/null; then
 fi
 
 # Fix opencode to use baseline binary (portable across machines/node versions)
+# Only set OPENCODE_BIN_PATH if the baseline binary actually exists
 if command -v opencode &>/dev/null; then
   _opencode_real=$(readlink -f "$(command -v opencode)" 2>/dev/null)
   if [ -n "$_opencode_real" ]; then
     _opencode_dir=$(dirname "$_opencode_real")
     _baseline_bin="$_opencode_dir/../node_modules/opencode-linux-x64-baseline/bin/opencode"
-    [ -x "$_baseline_bin" ] && export OPENCODE_BIN_PATH="$_baseline_bin"
+    if [ -x "$_baseline_bin" ]; then
+      export OPENCODE_BIN_PATH="$_baseline_bin"
+    fi
     unset _opencode_real _opencode_dir _baseline_bin
   fi
 fi
