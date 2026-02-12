@@ -140,7 +140,7 @@ return {
 
       switch_provider_and_model(
         _99.Providers.OpenCodeProvider,
-        "openrouter/moonshotai/kimi-k2.5",
+        "moonshotai/kimi-k2.5",
         "kimi 2.5 (OpenRouter)"
       )
     end, { desc = "Switch 99 to kimi 2.5 via OpenRouter" })
@@ -184,7 +184,7 @@ return {
 
       switch_provider_and_model(
         _99.Providers.OpenCodeProvider,
-        "openrouter/moonshotai/kimi-k2.5",
+        "moonshotai/kimi-k2.5",
         "kimi 2.5 (OpenRouter)"
       )
     end, { desc = "Model: kimi 2.5" })
