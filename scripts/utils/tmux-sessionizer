@@ -81,6 +81,13 @@ hydrate() {
     tmux send-keys -t "$session:opencode.1" "opencode" Enter
     tmux select-pane -t "$session:opencode.0"
 
+    # Window 5: codex (neovim + codex)
+    tmux new-window -t "$session" -n "codex" -c "$dir"
+    tmux send-keys -t "$session:codex" "nvim +Neotree ." Enter
+    tmux split-window -h -t "$session:codex" -c "$dir" -l 40%
+    tmux send-keys -t "$session:codex.1" "codex" Enter
+    tmux select-pane -t "$session:codex.0"
+
     # Focus back on claude window
     tmux select-window -t "$session:claude"
 }
