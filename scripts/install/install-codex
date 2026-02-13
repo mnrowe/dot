@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+install-codex() {
+	echo "Installing Codex - OpenAI's AI coding agent..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		if type brew &>/dev/null; then
+			echo "Installing via Homebrew..."
+			brew install openai-codex
+		else
+			echo "Installing via npm..."
+			npm install -g @openai/codex
+		fi
+		return
+	fi
+
+	if [[ $OSTYPE =~ ^msys ]]; then
+		echo "Installing via npm on Windows..."
+		npm install -g @openai/codex
+		return
+	fi
+
+	# Check for npm (cross-platform option)
+	if type npm &>/dev/null; then
+		echo "Installing via npm..."
+		npm install -g @openai/codex
+		return
+	fi
+
+	echo "OS unsupported by this installer: $OSTYPE"
+	echo "Please visit https://github.com/openai/codex for manual installation"
+	return 1
+}
+
+install-codex
