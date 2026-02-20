@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+install-docker() {
+	echo "Installing Docker..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		if type brew &>/dev/null; then
+			echo "Installing via Homebrew..."
+			brew install --cask docker
+		else
+			echo "Please install Homebrew first"
+			return 1
+		fi
+		return
+	fi
+
+	if type apt-get &>/dev/null; then
+		echo "Installing via apt (official Docker repo)..."
+		sudo apt-get update
+		sudo apt-get install -y ca-certificates curl gnupg
+		sudo install -m 0755 -d /etc/apt/keyrings
+		curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+			sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+		sudo chmod a+r /etc/apt/keyrings/docker.gpg
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+			sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+		sudo apt-get update
+		sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+		_post_install
+		return
+	fi
+
+	if type dnf &>/dev/null; then
+		echo "Installing via dnf..."
+		sudo dnf -y install dnf-plugins-core
+		sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+		sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+		sudo systemctl enable --now docker
+		_post_install
+		return
+	fi
+
+	if type pacman &>/dev/null; then
+		echo "Installing via pacman..."
+		sudo pacman -S --noconfirm docker docker-compose
+		sudo systemctl enable --now docker
+		_post_install
+		return
+	fi
+
+	# Fallback: official convenience script
+	if type curl &>/dev/null; then
+		echo "Installing via official convenience script..."
+		curl -fsSL https://get.docker.com | sudo sh
+		_post_install
+		return
+	fi
+
+	echo "OS unsupported by this installer"
+	echo "Please visit https://docs.docker.com/engine/install/ for manual installation"
+	return 1
+}
+
+_post_install() {
+	echo "Adding $USER to the docker group..."
+	sudo usermod -aG docker "$USER"
+	echo "Docker installed. Log out and back in for group membership to take effect."
+	echo "Or run: newgrp docker"
+}
+
+install-docker
