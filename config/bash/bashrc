@@ -158,7 +158,8 @@ __ps1() {
 		u='\[\e[33m\]' p='\[\e[34m\]' w='\[\e[35m\]' \
 		b='\[\e[36m\]' x='\[\e[0m\]' \
 		g="\[\033[38;2;90;82;76m\]" \
-		y='\[\e[33m\]'  # yellow for git status
+		y='\[\e[33m\]' \
+		v='\[\e[32m\]'  # green for venv, yellow for git status
 
 	[[ $EUID == 0 ]] && P='#' && u=$r && p=$u # root
 	[[ $PWD = / ]] && dir=/
@@ -204,11 +205,16 @@ __ps1() {
 		B="$g($b$B$git_status$g)"
 	fi
 
+	local venv=""
+	if [[ -n "$VIRTUAL_ENV" ]]; then
+		venv="$g($v${VIRTUAL_ENV##*/}$g)"
+	fi
+
 	countme="$USER$PROMPT_AT$(hostname):$dir($B)\$ "
 
-	short="$u\u$g$PROMPT_AT$h\h$g:$w$dir$B$p$P$x "
-	long="${g}╔$u\u$g$PROMPT_AT$h\h$g:$w$dir$B\n${g}╚$p$P$x "
-	double="${g}╔$u\u$g$PROMPT_AT$h\h$g:$w$dir\n${g}║$B\n${g}╚$p$P$x "
+	short="$u\u$g$PROMPT_AT$h\h$g:$w$dir$B$venv$p$P$x "
+	long="${g}╔$u\u$g$PROMPT_AT$h\h$g:$w$dir$B$venv\n${g}╚$p$P$x "
+	double="${g}╔$u\u$g$PROMPT_AT$h\h$g:$w$dir\n${g}║$B$venv\n${g}╚$p$P$x "
 
 	if ((${#countme} > PROMPT_MAX)); then
 		PS1="$double"
