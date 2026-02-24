@@ -38,8 +38,9 @@ end
 ------------------------------- main -------------------------------
 
 return {
-	window_decorations = "TITLE | RESIZE",
-	enable_tab_bar = true,
+	window_decorations = myos == "linux" and "RESIZE" or "TITLE | RESIZE",
+	enable_tab_bar = myos ~= "linux",
+	hide_tab_bar_if_only_one_tab = myos == "linux",
 	window_close_confirmation = "NeverPrompt",
 	default_prog = detect_shell(),
 
