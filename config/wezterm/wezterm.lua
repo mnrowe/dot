@@ -32,18 +32,14 @@ end
 ---------------------------- detect_font ---------------------------
 
 local function detect_font()
-	if myos == "windows" then
-		return wezterm.font("Ubuntu Mono")
-	else
-		return wezterm.font("UbuntuMono Nerd Font")
-	end
+	return wezterm.font("UbuntuMono Nerd Font Mono")
 end
 
 ------------------------------- main -------------------------------
 
 return {
-	window_decorations = "RESIZE",
-	enable_tab_bar = false,
+	window_decorations = "TITLE | RESIZE",
+	enable_tab_bar = true,
 	window_close_confirmation = "NeverPrompt",
 	default_prog = detect_shell(),
 
