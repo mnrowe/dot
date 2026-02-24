@@ -296,7 +296,7 @@ _have "nvim" && set-editor nvim
 
 # ----------------------------- keybinds ----------------------------
 
-bind -x '"\C-f": ~/.local/bin/scripts/utils/tmux-sessionizer'
+bind -x '"\C-f": ~/.local/bin/scripts/tmux-sessionizer'
 
 # ----------------------------- obsd ----------------------------
 
