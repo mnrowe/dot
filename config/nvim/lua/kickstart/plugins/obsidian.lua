@@ -5,11 +5,29 @@ return {
   ft = "markdown",
   dependencies = {
     "nvim-lua/plenary.nvim",
+    "hrsh7th/nvim-cmp",
   },
   opts = {
     dir = "$HOME/Documents/obsd",
   },
   config = function()
+    local cmp = require "cmp"
+    cmp.setup.filetype("markdown", {
+      mapping = cmp.mapping.preset.insert {
+        ["<C-n>"] = cmp.mapping.select_next_item(),
+        ["<C-p>"] = cmp.mapping.select_prev_item(),
+        ["<Tab>"] = cmp.mapping.select_next_item(),
+        ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+        ["<CR>"] = cmp.mapping.confirm { select = true },
+        ["<C-e>"] = cmp.mapping.abort(),
+      },
+      sources = {
+        { name = "obsidian" },
+        { name = "obsidian_new" },
+        { name = "obsidian_tags" },
+      },
+    })
+
     require("obsidian").setup {
       workspaces = {
         {
