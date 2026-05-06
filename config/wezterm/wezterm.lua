@@ -1,6 +1,8 @@
 local wezterm = require("wezterm")
 local mux = wezterm.mux
 
+local pwsh = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
 ----------------------------- detect_os ----------------------------
 
 local function detect_os()
@@ -21,8 +23,8 @@ local myos = detect_os()
 
 local function detect_shell()
 	if myos == "windows" then
-		return { "wsl.exe" }
-	elseif myos == "mac" then
+		return { pwsh, "-NoLogo" }
+	elseif myos == "macos" then
 		return { "/opt/homebrew/bin/bash", "--login" }
 	else
 		return { "/bin/bash", "--login" }
@@ -35,21 +37,57 @@ local function detect_font()
 	return wezterm.font("UbuntuMono Nerd Font Mono")
 end
 
+------------------------- startup layout ---------------------------
+
+if myos == "windows" then
+	wezterm.on("gui-startup", function(cmd)
+		local tab, pane, window = mux.spawn_window({
+			args = { pwsh, "-NoLogo" },
+		})
+
+		window:spawn_tab({
+			args = { "wsl.exe", "--distribution", "Ubuntu" },
+		})
+	end)
+end
+
 ------------------------------- main -------------------------------
 
 return {
 	window_decorations = myos == "linux" and "RESIZE" or "TITLE | RESIZE",
-	enable_tab_bar = myos ~= "linux",
-	hide_tab_bar_if_only_one_tab = myos == "linux",
+	enable_tab_bar = true,
+	hide_tab_bar_if_only_one_tab = false,
 	window_close_confirmation = "NeverPrompt",
-	default_prog = detect_shell(),
 
-	--color_scheme = 'Gruvbox Material (Gogh)',
+	default_prog = detect_shell(),
+	default_domain = "local",
+
+	launch_menu = {
+		{
+			label = "PowerShell 7",
+			args = { pwsh, "-NoLogo" },
+		},
+		{
+			label = "Windows PowerShell",
+			args = { "powershell.exe", "-NoLogo" },
+		},
+		{
+			label = "WSL Ubuntu",
+			args = { "wsl.exe", "--distribution", "Ubuntu" },
+		},
+	},
+
+	keys = {
+		{
+			key = "l",
+			mods = "CTRL|SHIFT",
+			action = wezterm.action.ShowLauncher,
+		},
+	},
+
 	color_scheme = "Dracula (base16)",
 	font = detect_font(),
 	font_size = 14,
-
-	default_domain = myos:match("windows") and "WSL:Ubuntu" or "local",
 
 	colors = {
 		cursor_bg = "#928374",
@@ -66,23 +104,4 @@ return {
 	term = "xterm-256color",
 	animation_fps = 60,
 	max_fps = 60,
-
-	----------- rwxrob streaming stuff, fyi --------------
-
-	--font_size = 41,
-	--initial_cols = 74,
-	--initial_rows = 22,
-
-	--[[
-  -- exactly position
-  wezterm.on('gui-startup', function(cmd)
-    local tab, pane, window = mux.spawn_window(cmd or {})
-    window:gui_window():set_position(0, 130)
-end),
-  ]]
-	--
-
-	--window_decorations = "RESIZE",
-	--enable_tab_bar = false,
-	--hide_tab_bar_if_only_one_tab = true,
 }
