@@ -19,6 +19,22 @@ end
 
 local myos = detect_os()
 
+local function is_fedora()
+	if myos ~= "linux" then
+		return false
+	end
+
+	local os_release = io.open("/etc/os-release", "r")
+	if not os_release then
+		return false
+	end
+
+	local content = os_release:read("*a")
+	os_release:close()
+
+	return content:match("ID=fedora") ~= nil or content:match('ID="fedora"') ~= nil
+end
+
 --------------------------- detect_shell ---------------------------
 
 local function detect_shell()
@@ -55,7 +71,7 @@ end
 
 return {
 	window_decorations = myos == "linux" and "RESIZE" or "TITLE | RESIZE",
-	enable_tab_bar = true,
+	enable_tab_bar = not is_fedora(),
 	hide_tab_bar_if_only_one_tab = false,
 	window_close_confirmation = "NeverPrompt",
 
