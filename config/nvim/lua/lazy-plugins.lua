@@ -38,6 +38,7 @@ require("lazy").setup({
   require "kickstart.plugins.neogit",
   require "kickstart.plugins.pomo",
   require "kickstart.plugins.mp",
+  require "kickstart.plugins.img-clip",
   require "kickstart.plugins.99",
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
