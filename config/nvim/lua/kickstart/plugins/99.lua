@@ -121,7 +121,7 @@ return {
       switch_model "haiku"
     end, { desc = "Switch 99 to Haiku (cheapest, fastest) via ClaudeCodeProvider" })
 
-    vim.api.nvim_create_user_command("AiSonnet via ClaudeCodeProvider", function()
+    vim.api.nvim_create_user_command("AiSonnet", function()
       switch_to_claude()
       switch_model "sonnet"
     end, { desc = "Switch 99 to Sonnet (balanced) via ClaudeCodeProvider" })
