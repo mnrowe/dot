@@ -13,7 +13,7 @@ return {
     _99.setup {
       -- Use Claude Code as the AI provider (default)
       provider = _99.Providers.ClaudeCodeProvider,
-      model = "haiku", -- Use short alias (automatically uses latest version)
+      model = "opus", -- Use short alias (automatically uses latest version)
 
       -- Logging configuration (helps with debugging)
       logger = {
