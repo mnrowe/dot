@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Link only the tracked Claude config into ~/.claude — never the whole dir,
+# which also holds credentials, session transcripts, and project history.
+
+repo="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
+
+mkdir -p "$HOME/.claude"
+
+echo "$HOME/.claude/CLAUDE.md -> $repo/.claude/CLAUDE.md"
+ln -sfn "$repo/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+
+echo "$HOME/.claude/standards -> $repo/.claude/standards"
+ln -sfn "$repo/.claude/standards" "$HOME/.claude/standards"
