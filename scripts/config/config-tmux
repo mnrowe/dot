@@ -1,7 +1,11 @@
 #!/bin/sh
 
 dir="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")/config/tmux"
-echo "$HOME/.tmux.conf -> $dir/tmux.conf"
-ln -sfn "$dir/tmux.conf" ~/.tmux.conf
-echo "$HOME/.tmux-sessionizer -> $dir/tmux-sessionizer-hydrate"
-ln -sfn "$dir/tmux-sessionizer-hydrate" ~/.tmux-sessionizer
+mkdir -p "$HOME/.config/tmux"
+echo "$HOME/.config/tmux/tmux.conf -> $dir/tmux.conf"
+ln -sfn "$dir/tmux.conf" "$HOME/.config/tmux/tmux.conf"
+
+# tpm + plugins live outside the repo
+tpm="$HOME/.config/tmux/plugins/tpm"
+[ -d "$tpm" ] || git clone --depth 1 https://github.com/tmux-plugins/tpm "$tpm"
+"$tpm/bin/install_plugins"
