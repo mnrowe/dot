@@ -63,7 +63,7 @@ Fedora: `sudo dnf install -y git curl gcc make unzip ripgrep fzf jq xclip`
 cd ~/Repos/dot
 ./bootstrap            # interactive menu
 ./bootstrap --minimal  # tmux + nvim + bash/tmux/nvim/scripts config
-./bootstrap --server   # + nvm/node, go, ansible, lazygit, claude, opencode, codex
+./bootstrap --server   # + nvm/node, go, ansible, lazygit, claude
 ./bootstrap --desktop  # + wezterm, UbuntuMono Nerd Font, podman  (real Linux desktop only)
 ```
 
@@ -76,8 +76,8 @@ Each step keeps going if one fails; scroll back for `[ERROR]` lines.
 
 ```sh
 ./scripts/install/install-<tool>    # tmux neovim nvm nodejs golang ansible lazygit
-                                    # claude opencode codex wezterm ubuntumono podman docker
-./scripts/config/config-<tool>      # bash tmux nvim scripts lazygit opencode claude wezterm i3
+                                    # claude wezterm ubuntumono podman docker
+./scripts/config/config-<tool>      # bash tmux nvim scripts lazygit claude wezterm i3
 ./scripts/config/config-dot-basic   # re-link bash, nvim, tmux, scripts (prompts first)
 ./scripts/config/config-dot-all     # re-link everything (prompts first)
 ```
@@ -92,11 +92,10 @@ Install scripts are safe to re-run; config scripts just re-create symlinks.
 | `tmux/tmux.conf` | `~/.config/tmux/tmux.conf` (TPM + plugins in `~/.config/tmux/plugins/`) |
 | `nvim/` | `~/.config/nvim` |
 | `lazygit/` | `~/.config/lazygit` (existing dir backed up to `.backup`) |
-| `opencode/` | `~/.config/opencode` |
 | `i3/` | `~/.config/i3` |
 | `wezterm/wezterm.lua` | `~/.wezterm.lua` (Linux symlink; **copied** on Windows/WSL) |
 | `scripts/` (repo root) | `~/.local/bin/scripts` (on `PATH`) |
-| `.claude/CLAUDE.md`, `.claude/standards/` | `~/.claude/` (only those, never the whole dir) |
+| `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/standards/` | `~/.claude/` (only those, never the whole dir) |
 
 > `bootstrap` overwrites `~/.bashrc`. Back up the stock one first if you care:
 > `cp ~/.bashrc ~/.bashrc.orig`
@@ -107,8 +106,6 @@ Install scripts are safe to re-run; config scripts just re-create symlinks.
 |---|---|
 | `~/.ssh/` keys | git push, ssh-agent auto-start in login shells |
 | `~/.env` | auto-exported by `envx` on every shell |
-| `~/.config/opencode/.env` | opencode API keys |
-| `OPENROUTER_API_KEY` | nvim `99` plugin (put it in `~/.env`) |
 | `~/.sshpass` | `sshh` alias |
 | `~/Documents/obsd` | Obsidian vault: `day`, `inbox`, `obsu`, nvim `<leader>o*`, tmux prefix `o` |
 
@@ -171,7 +168,7 @@ Anything else machine-specific goes in `~/.bash_private` / `~/.bash_work`
 
 | Key | Action |
 |---|---|
-| `f` | sessionizer: fzf a project dir → session with nvim+claude, lazygit, terminal, opencode, codex windows |
+| `f` | sessionizer: fzf a project dir → session with nvim+claude, lazygit, terminal windows |
 | `t` | plain session in `~` |
 | `o` | Obsidian vault session |
 | `h j k l` | move between panes |
@@ -186,7 +183,7 @@ Anything else machine-specific goes in `~/.bash_private` / `~/.bash_work`
 `clone user/repo` → `~/Repos/github.com/user/repo`
 
 **nvim**: leader is `Space` · `<leader>e` Neo-tree · `<leader>f` format ·
-`Ctrl-h/j/k/l` windows · `<leader>o*` Obsidian · `<leader>9*` 99 (Claude) ·
+`Ctrl-h/j/k/l` windows · `<leader>o*` Obsidian · `<leader>9*` 99 (Claude Opus) ·
 `<Esc><Esc>` leave terminal mode
 
 **WezTerm**: `Ctrl-Shift-L` launcher (pwsh / PowerShell / WSL) ·

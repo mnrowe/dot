@@ -54,11 +54,7 @@ hydrate() {
     # ┌───────────────────────────┐
     # │  clean shell              │
     # └───────────────────────────┘
-    # Window 4: opencode
-    # ┌───────────────────────────┐
-    # │  clean opencode             │
-    # └───────────────────────────┘
-    
+
     # Window 1: claude (neovim + claude)
     tmux rename-window -t "$session:1" "claude"
     tmux set-option -t "$session:claude" automatic-rename off
@@ -73,20 +69,6 @@ hydrate() {
 
     # Window 3: terminal
     tmux new-window -t "$session" -n "terminal" -c "$dir"
-
-    # Window 4: opencode (neovim + opencode)
-    tmux new-window -t "$session" -n "opencode" -c "$dir"
-    tmux send-keys -t "$session:opencode" "nvim +Neotree ." Enter
-    tmux split-window -h -t "$session:opencode" -c "$dir" -l 40%
-    tmux send-keys -t "$session:opencode.1" "opencode" Enter
-    tmux select-pane -t "$session:opencode.0"
-
-    # Window 5: codex (neovim + codex)
-    tmux new-window -t "$session" -n "codex" -c "$dir"
-    tmux send-keys -t "$session:codex" "nvim +Neotree ." Enter
-    tmux split-window -h -t "$session:codex" -c "$dir" -l 40%
-    tmux send-keys -t "$session:codex.1" "codex" Enter
-    tmux select-pane -t "$session:codex.0"
 
     # Focus back on claude window
     tmux select-window -t "$session:claude"
