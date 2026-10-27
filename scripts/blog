@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # A bash script that helps me create notes for my blog
-
-HOSTING_REPO="$REPOS/blog/"
+# Deploy is handled by Cloudflare Pages (auto-builds from GitHub on every push).
 
 # get_filename prompts the user for a filename
 get_filename() {
@@ -71,48 +70,19 @@ post)
 	;;
 
 reset)
-	rm -rf "$REPOS/blog/public"
+	# Local preview with drafts shown (-D), since posts start as draft: true
 	cd "$REPOS/blog/" || exit
-	hugo
-	hugo server --disableFastRender
+	hugo server -D --disableFastRender
 	;;
 
 pub)
-	# ask for commit message, rebuild the site, push to blog repo, then push to hosting repo
+	# Commit source and push. Cloudflare Pages auto-builds & deploys from GitHub.
 	read -p "Enter commit message: " commitmessage
-
-	# read -p "Would you like to tweet + toot that? (y/n) " will_tweet
-
-	# if [[ $will_tweet == [Yy]* ]]; then
-	# 	read -p "Enter tags, or press enter to post without tags: " tags
-	# fi
-
 	cd "$REPOS/blog" || exit
-	rm -rf "$REPOS/blog/public"
-	hugo
 	git add .
 	git commit -m "$commitmessage"
 	git push
-	rm -rf "$HOSTING_REPO*"
-	cp -r "$REPOS"/blog/public/* "$HOSTING_REPO"
-	cd "$HOSTING_REPO" || exit
-	git add .
-	git commit -m "$commitmessage"
-	git push
-
-	# if [[ $will_tweet == [Yy]* ]]; then
-	# 	echo "Waiting 10 seconds to allow it to publish before tweeting."
-	# 	sleep 10
-	#
-	# 	# post to twitter/mastodon without tags
-	# 	if [[ $tags == "" ]]; then
-	# 		tweet
-	# 		toot
-	# 		exit
-	# 	fi
-	# 	tweet "$tags"
-	# 	toot "$tags"
-	# fi
+	echo "Pushed. Cloudflare Pages is building — watch the Deployments tab."
 	;;
 
 "")
