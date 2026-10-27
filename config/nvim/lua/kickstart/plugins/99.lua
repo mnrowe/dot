@@ -32,6 +32,7 @@ return {
       -- Auto-add markdown files based on location
       md_files = {
         "AGENT.md",
+        "CLAUDE.md", -- same per-repo rules Claude Code reads
       },
     }
 

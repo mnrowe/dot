@@ -84,6 +84,8 @@ Each step keeps going if one fails; scroll back for `[ERROR]` lines.
 
 Install scripts are safe to re-run; config scripts just re-create symlinks.
 
+How the tools fit together day to day: [WORKFLOW.md](WORKFLOW.md).
+
 ## 4. What gets linked where
 
 | Source (`config/…`) | Target |
