@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# auto-editor: cuts silent stretches out of recorded talks (often 15-40% of
+# the runtime) before watching or transcribing them.
+
+readonly BIN_DIR="$HOME/.local/bin"
+
+install-auto-editor() {
+	echo "Installing auto-editor - remove silences from videos..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		brew install auto-editor
+		return
+	fi
+
+	local asset
+	case "$(uname -m)" in
+	x86_64) asset="auto-editor-linux-x86_64" ;;
+	aarch64) asset="auto-editor-linux-aarch64" ;;
+	*)
+		echo "Unsupported architecture: $(uname -m)" 1>&2
+		return 1
+		;;
+	esac
+
+	mkdir -p "$BIN_DIR"
+	curl -fsSL -o "$BIN_DIR/auto-editor" \
+		"https://github.com/WyattBlue/auto-editor/releases/latest/download/$asset"
+	chmod +x "$BIN_DIR/auto-editor"
+	"$BIN_DIR/auto-editor" --version
+}
+
+install-auto-editor

@@ -77,6 +77,8 @@ Each step keeps going if one fails; scroll back for `[ERROR]` lines.
 ```sh
 ./scripts/install/install-<tool>    # tmux neovim nvm nodejs golang ansible lazygit
                                     # claude wezterm ubuntumono podman docker
+                                    # optional, for learning (WORKFLOW.md §7):
+                                    # yt-dlp fabric whisper auto-editor
 ./scripts/config/config-<tool>      # bash tmux nvim scripts lazygit claude wezterm i3
 ./scripts/config/config-dot-basic   # re-link bash, nvim, tmux, scripts (prompts first)
 ./scripts/config/config-dot-all     # re-link everything (prompts first)

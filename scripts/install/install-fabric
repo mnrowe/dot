@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Fabric (danielmiessler/fabric): prompt "patterns" for summarizing videos,
+# articles and podcasts. The Sample step in WORKFLOW.md. Run `fabric --setup`
+# afterwards and pick the Claude Code vendor to use the subscription.
+
+readonly BIN_DIR="$HOME/.local/bin"
+
+install-fabric() {
+	echo "Installing Fabric - AI patterns for summarizing content..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		brew install fabric-ai
+		echo "Homebrew names it fabric-ai: alias fabric='fabric-ai'"
+		return
+	fi
+
+	local arch
+	case "$(uname -m)" in
+	x86_64) arch="x86_64" ;;
+	aarch64) arch="arm64" ;;
+	*)
+		echo "Unsupported architecture: $(uname -m)" 1>&2
+		return 1
+		;;
+	esac
+
+	TMP_DIR="$(mktemp -d)"
+	trap 'rm -rf "$TMP_DIR"' EXIT
+	curl -fsSL -o "$TMP_DIR/fabric.tar.gz" \
+		"https://github.com/danielmiessler/fabric/releases/latest/download/fabric_Linux_${arch}.tar.gz"
+	tar -xzf "$TMP_DIR/fabric.tar.gz" -C "$TMP_DIR"
+	mkdir -p "$BIN_DIR"
+	install -m 0755 "$TMP_DIR/fabric" "$BIN_DIR/fabric"
+
+	"$BIN_DIR/fabric" --version
+	echo "Next: fabric --setup  (choose Claude Code as the vendor, then update patterns)"
+}
+
+install-fabric

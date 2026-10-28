@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# yt-dlp (standalone build, self-updates with `yt-dlp -U`) plus deno, the
+# JavaScript runtime YouTube extraction now needs. Used by scripts/ytnote.
+
+readonly BIN_DIR="$HOME/.local/bin"
+
+arch_suffix() {
+	case "$(uname -m)" in
+	x86_64) echo "x86_64" ;;
+	aarch64) echo "aarch64" ;;
+	*)
+		echo "Unsupported architecture: $(uname -m)" 1>&2
+		return 1
+		;;
+	esac
+}
+
+remove_pip_copy() {
+	# A pip --user install puts its own yt-dlp in ~/.local/bin and would shadow
+	# or fight with the standalone build.
+	if python3 -m pip show yt-dlp &>/dev/null; then
+		echo "Removing pip-installed yt-dlp..."
+		python3 -m pip uninstall -y yt-dlp
+	fi
+}
+
+install_yt_dlp() {
+	local asset="yt-dlp_linux"
+	[[ "$(arch_suffix)" == "aarch64" ]] && asset="yt-dlp_linux_aarch64"
+	echo "Installing yt-dlp ($asset)..."
+	curl -fsSL -o "$BIN_DIR/yt-dlp" \
+		"https://github.com/yt-dlp/yt-dlp/releases/latest/download/$asset"
+	chmod +x "$BIN_DIR/yt-dlp"
+}
+
+install_deno() {
+	TMP_DIR="$(mktemp -d)"
+	trap 'rm -rf "$TMP_DIR"' EXIT
+	echo "Installing deno..."
+	curl -fsSL -o "$TMP_DIR/deno.zip" \
+		"https://github.com/denoland/deno/releases/latest/download/deno-$(arch_suffix)-unknown-linux-gnu.zip"
+	unzip -o -q "$TMP_DIR/deno.zip" -d "$BIN_DIR"
+	chmod +x "$BIN_DIR/deno"
+}
+
+install-yt-dlp() {
+	echo "Installing yt-dlp + deno - YouTube downloads and transcripts..."
+
+	if [[ $OSTYPE =~ ^darwin ]]; then
+		brew install yt-dlp deno
+		return
+	fi
+
+	if ! type curl &>/dev/null || ! type unzip &>/dev/null; then
+		echo "Needs curl and unzip" 1>&2
+		return 1
+	fi
+
+	mkdir -p "$BIN_DIR"
+	remove_pip_copy
+	install_yt_dlp
+	install_deno
+
+	"$BIN_DIR/yt-dlp" --version
+	"$BIN_DIR/deno" --version | head -1
+}
+
+install-yt-dlp

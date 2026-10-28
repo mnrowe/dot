@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# whisper-ctranslate2: local speech-to-text (faster-whisper) for talks with no
+# captions. Used by `ytnote --file`. Audio never leaves the machine.
+
+install-whisper() {
+	echo "Installing whisper-ctranslate2 - local speech-to-text..."
+
+	if ! type ffmpeg &>/dev/null; then
+		echo "Needs ffmpeg: sudo dnf install ffmpeg  (or apt install ffmpeg)" 1>&2
+		return 1
+	fi
+	if ! type pipx &>/dev/null; then
+		echo "Needs pipx: sudo dnf install pipx  (or apt install pipx)" 1>&2
+		return 1
+	fi
+
+	pipx install --force whisper-ctranslate2
+	whisper-ctranslate2 --help >/dev/null
+	echo "Installed. The first run downloads the speech model (small: ~500 MB)."
+}
+
+install-whisper

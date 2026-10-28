@@ -1,0 +1,316 @@
+#!/usr/bin/env python3
+"""Create a video note in the Obsidian vault, and check it against the transcript.
+
+Usage:
+  ytnote <youtube-url>          create a note (inbox naming) and open it in nvim
+  ytnote --file <path-or-url>   same for a local file or any stream yt-dlp can
+                                fetch; transcribed locally with Whisper at --check
+  ytnote --check <note.md>      compare my notes with the transcript via claude -p
+  ytnote --no-edit ...          create the note without opening nvim
+
+The AI check refuses to run until the "From memory" section is filled in:
+write first, check second.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+from dataclasses import dataclass
+from pathlib import Path
+
+VAULT = Path(os.environ.get("OBSD", Path.home() / "Documents/obsd"))
+CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "ytnote"
+WHISPER_MODEL = os.environ.get("YTNOTE_WHISPER_MODEL", "small.en")
+HUB_LINK = "[[1793124163-security-learning-resources|security learning resources]]"
+MEMORY_HEADING = "## From memory (video closed)"
+
+CHECK_PROMPT = """You are checking my notes on a video against its transcript.
+Do not rewrite my notes. Reply in Markdown with exactly these sections:
+
+### Missed
+Important points I left out, each with a [hh:mm:ss] timestamp.
+
+### Wrong or oversimplified
+Anything in my notes that the transcript contradicts, with timestamps.
+
+### My open questions
+Answer any line in my notes marked with a question mark, from the
+transcript only, with timestamps. Say so if the transcript doesn't answer it.
+
+### Recall questions
+5 questions on the most important ideas. Questions only, no answers.
+
+The transcript comes first, then my note."""
+
+
+@dataclass
+class Video:
+    id: str
+    title: str
+    channel: str
+    upload_date: str
+    duration: str
+    url: str
+    description: str
+
+
+def run(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+    """Run a command, exiting with its stderr if it fails."""
+    result = subprocess.run(cmd, capture_output=True, text=True, **kwargs)
+    if result.returncode != 0:
+        sys.exit(f"ytnote: {cmd[0]} failed:\n{result.stderr.strip()}")
+    return result
+
+
+def fetch_video(url: str) -> Video:
+    info = json.loads(run(["yt-dlp", "--skip-download", "--dump-json", url]).stdout)
+    upload = info.get("upload_date") or ""
+    if len(upload) == 8:
+        upload = f"{upload[:4]}-{upload[4:6]}-{upload[6:]}"
+    return Video(
+        id=info["id"],
+        title=info.get("title", info["id"]),
+        channel=info.get("channel") or info.get("uploader") or "unknown",
+        upload_date=upload,
+        duration=info.get("duration_string", ""),
+        url=info.get("webpage_url", url),
+        description=info.get("description") or "",
+    )
+
+
+def vtt_to_text(vtt: str) -> str:
+    """Flatten WebVTT captions to '[hh:mm:ss] text' lines without rolling repeats."""
+    lines, recent, start = [], [], "00:00:00"
+    for raw in vtt.splitlines():
+        # YouTube writes hh:mm:ss.mmm; Whisper drops the hours under an hour.
+        cue = re.match(r"((?:\d{2}:)?\d{2}:\d{2})\.\d{3} -->", raw)
+        if cue:
+            start = cue.group(1)
+            if start.count(":") == 1:
+                start = f"00:{start}"
+            continue
+        text = re.sub(r"<[^>]+>", "", raw).strip()
+        if not text or text.startswith(("WEBVTT", "Kind:", "Language:")):
+            continue
+        if text in recent:
+            continue
+        recent = (recent + [text])[-3:]
+        lines.append(f"[{start}] {text}")
+    return "\n".join(lines)
+
+
+def transcript(video_id: str) -> str:
+    """Return the cached transcript, downloading English captions if needed."""
+    CACHE.mkdir(parents=True, exist_ok=True)
+    cached = CACHE / f"{video_id}.txt"
+    if cached.exists():
+        return cached.read_text()
+    cmd = [
+        "yt-dlp", "--skip-download", "--write-subs", "--write-auto-subs",
+        # Just "en": "en.*" also matches dozens of auto-translated tracks
+        # and gets rate-limited (HTTP 429).
+        "--sub-langs", "en", "--sub-format", "vtt",
+    ]
+    # Logged-in requests are throttled far less, e.g. YTNOTE_COOKIES=firefox
+    if browser := os.environ.get("YTNOTE_COOKIES"):
+        cmd += ["--cookies-from-browser", browser]
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            [*cmd, "-o", f"{tmp}/%(id)s.%(ext)s",
+             f"https://www.youtube.com/watch?v={video_id}"],
+            capture_output=True, text=True,
+        )
+        if "HTTP Error 429" in result.stderr:
+            sys.exit(
+                "ytnote: YouTube is rate-limiting captions (HTTP 429). Try again "
+                "in an hour, set YTNOTE_COOKIES=firefox, or paste the transcript "
+                f"into {cached}"
+            )
+        if result.returncode != 0:
+            sys.exit(f"ytnote: yt-dlp failed:\n{result.stderr.strip()}")
+        vtts = sorted(Path(tmp).glob("*.vtt"))
+        if not vtts:
+            sys.exit("ytnote: no English captions available for this video")
+        text = vtt_to_text(vtts[0].read_text())
+    cached.write_text(text)
+    return text
+
+
+def is_url(source: str) -> bool:
+    return re.match(r"https?://", source) is not None
+
+
+def file_video(source: str) -> Video:
+    """Describe a local file or non-YouTube stream; its id is a hash of the source."""
+    key = source if is_url(source) else str(Path(source).resolve())
+    if not is_url(source) and not Path(source).is_file():
+        sys.exit(f"ytnote: no such file: {source}")
+    title = Path(source).stem if not is_url(source) else source
+    if is_url(source):
+        info = subprocess.run(
+            ["yt-dlp", "--skip-download", "--dump-json", source],
+            capture_output=True, text=True,
+        )
+        if info.returncode == 0:
+            title = json.loads(info.stdout).get("title", source)
+    return Video(
+        id="file-" + hashlib.sha1(key.encode()).hexdigest()[:12],
+        title=title, channel="local", upload_date="", duration="",
+        url=key, description="",
+    )
+
+
+def whisper_transcript(video_id: str, source: str) -> str:
+    """Transcribe a file or stream locally with Whisper and cache the result."""
+    cached = CACHE / f"{video_id}.txt"
+    if cached.exists():
+        return cached.read_text()
+    CACHE.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        media = source
+        if is_url(source):
+            print("ytnote: downloading audio...", file=sys.stderr)
+            run(["yt-dlp", "-x", "--audio-format", "m4a",
+                 "-o", f"{tmp}/audio.%(ext)s", source])
+            media = f"{tmp}/audio.m4a"
+        print(f"ytnote: transcribing with Whisper ({WHISPER_MODEL}); "
+              "this takes a while on CPU...", file=sys.stderr)
+        run(["whisper-ctranslate2", media, "--model", WHISPER_MODEL,
+             "--language", "en", "--compute_type", "int8",
+             "--vad_filter", "True", "--output_format", "vtt", "--output_dir", tmp])
+        vtts = sorted(Path(tmp).glob("*.vtt"))
+        if not vtts:
+            sys.exit("ytnote: Whisper produced no transcript")
+        text = vtt_to_text(vtts[0].read_text())
+    cached.write_text(text)
+    return text
+
+
+def slug(title: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:60].rstrip("-")
+
+
+def slide_links(description: str) -> list[str]:
+    """URLs on, or right after, description lines that mention slides."""
+    lines = description.splitlines()
+    urls = []
+    for i, line in enumerate(lines):
+        if "slide" in line.lower():
+            nearby = " ".join(lines[i : i + 2])
+            urls.extend(re.findall(r"https?://\S+", nearby))
+    return urls
+
+
+def render_note(video: Video) -> str:
+    channel_tag = slug(video.channel)
+    slides = slide_links(video.description)
+    slides_line = f"Slides: {slides[0]}" if slides else "Slides:"
+    return f"""---
+date: {dt.date.today().isoformat()}
+tags: [video, {channel_tag}]
+video_id: {video.id}
+source: {video.url}
+links:
+    - {HUB_LINK}
+---
+
+# {video.title}
+
+Video: {video.url}
+Channel: {video.channel} | Uploaded: {video.upload_date} | Length: {video.duration}
+{slides_line}
+
+## My questions (before watching)
+
+1.
+
+## Timestamps
+
+{MEMORY_HEADING}
+
+Main ideas, in my words:
+
+What surprised me / what I doubt:
+
+## 48-hour action
+
+- [ ]
+
+## Recall Check
+
+"""
+
+
+def create(source: str, edit: bool, local: bool) -> None:
+    video = file_video(source) if local else fetch_video(source)
+    note = VAULT / "notes" / f"{int(time.time())}-{slug(video.title)}.md"
+    note.write_text(render_note(video))
+    print(note)
+    if local:
+        print("ytnote: transcript will be made with Whisper at --check time")
+    else:
+        # Fetch now so --check works offline later; a failure here isn't fatal.
+        try:
+            transcript(video.id)
+        except SystemExit as err:
+            print(f"ytnote: transcript not cached yet: {err}", file=sys.stderr)
+    if edit:
+        os.execvp("nvim", ["nvim", str(note)])
+
+
+def memory_section(note_text: str) -> str:
+    after = note_text.split(MEMORY_HEADING, 1)[-1]
+    body = after.split("\n## ", 1)[0]
+    filler = {"Main ideas, in my words:", "What surprised me / what I doubt:"}
+    return "\n".join(
+        line for line in body.splitlines() if line.strip() and line.strip() not in filler
+    )
+
+
+def check(note_path: Path) -> None:
+    note_text = note_path.read_text()
+    match = re.search(r"^video_id:\s*(\S+)", note_text, re.M)
+    if not match:
+        sys.exit("ytnote: no video_id in the note's frontmatter")
+    if MEMORY_HEADING not in note_text or not memory_section(note_text):
+        sys.exit(f"ytnote: fill in '{MEMORY_HEADING}' first, then check")
+    video_id = match.group(1)
+    if video_id.startswith("file-"):
+        source = re.search(r"^source:\s*(.+)$", note_text, re.M)
+        if not source:
+            sys.exit("ytnote: no source in the note's frontmatter")
+        text = whisper_transcript(video_id, source.group(1).strip())
+    else:
+        text = transcript(video_id)
+    context = f"TRANSCRIPT\n\n{text}\n\nMY NOTE\n\n{note_text}"
+    result = run(["claude", "-p", CHECK_PROMPT], input=context)
+    with note_path.open("a") as f:
+        f.write(f"\n## AI check ({dt.date.today().isoformat()})\n\n")
+        f.write(result.stdout.strip() + "\n")
+    print(f"appended AI check to {note_path}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("target", help="YouTube URL, file/stream, or a note with --check")
+    parser.add_argument("--check", action="store_true", help="run the AI check")
+    parser.add_argument("--file", action="store_true", help="local file or other stream")
+    parser.add_argument("--no-edit", action="store_true", help="don't open nvim")
+    args = parser.parse_args()
+    if args.check:
+        check(Path(args.target))
+    else:
+        create(args.target, edit=not args.no_edit, local=args.file)
+
+
+if __name__ == "__main__":
+    main()

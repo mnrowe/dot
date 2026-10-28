@@ -17,6 +17,9 @@ map that ties the repos together.
 | Change live infrastructure | Claude writes and plans, **I** apply |
 | Recurring checks | `/schedule` (cloud) or a `claude -p` script (local) |
 | AI inside homelab apps | Anthropic API (Haiku) behind LiteLLM, not my subscription |
+| Is this video/post worth my time? | `fabric -y <url> -p summarize` |
+| Learn from a video properly | `ytnote <url>` → watch → write from memory → `ytnote --check` |
+| Go deep on a topic | Claude Research (claude.ai) or deep research in Claude Code |
 
 ---
 
@@ -167,7 +170,95 @@ Open WebUI┘                                            └─► local model (
 - Don't buy a GPU for this. At my volume the API costs less than the
   electricity a local model would use.
 
-## 7. New machine
+## 7. Learning: Sample, Delve, Absorb
+
+From Jeff McJunkin's Antisyphon talk ([video](https://www.youtube.com/watch?v=H7n9t1uCjTE),
+[slides](https://bit.ly/learningwithai)). Sample far more than you study,
+study far more than you lab, and test yourself on what you keep.
+
+| Phase | Goal | Ratio | Tools here |
+|---|---|---|---|
+| **Sample** | find what's worth it | 10-100x | FreshRSS (by topic), `fabric ... -p summarize` |
+| **Delve** | go deep on the best 5-10% | 3-5x | `ytnote`, Claude Research, NotebookLM audio overviews |
+| **Absorb** | lock it in, apply it | 1x | write from memory, `ytnote --check`, Recall Checks, lab time |
+
+### Weekly cadence
+
+| Do | Amount | Time |
+|---|---|---|
+| Sample videos, posts, reports | 10-30 | ~1 h, spread out |
+| Listen passively (NotebookLM audio, podcasts) | 5-10 | 2-3 h (commute, chores) |
+| Watch/read in full with `ytnote` | 1-5 | 1-2 h |
+| Test myself (Recall Checks, quiz) | 1 | 30 min |
+| Research it in the lab (`helios`) | 1 | 1-4 h |
+| Share it (blog post, team lunch) | 1/month | - |
+
+### Sample: decide fast
+
+```sh
+fabric -y "https://www.youtube.com/watch?v=..." -p summarize   # YouTube
+fabric -u "https://example.com/post" -p summarize               # web page
+```
+
+Fabric runs through Claude Code (`fabric --setup` → Claude Code vendor), so it
+uses the subscription. **Its summaries are for deciding, never for the vault:**
+notes are written in my own words.
+
+### Delve: one video, done properly
+
+```sh
+ytnote https://www.youtube.com/watch?v=...     # YouTube: note + cached captions
+ytnote --file talk.mp4                         # local file, Whisper at --check
+ytnote --file "https://.../playlist.m3u8"      # any stream yt-dlp can fetch
+```
+
+1. **Before:** write 2-3 questions in the note.
+2. **During:** timestamps + one-liners, at 1.25-1.5x. Pause after each
+   section and say it back.
+3. **After, video closed:** fill in *From memory*: main ideas, surprises,
+   doubts, **one 48-hour action**.
+4. `ytnote --check <note>`: Claude compares my notes to the transcript and
+   appends what I missed or got wrong, plus recall questions. It refuses to run
+   until *From memory* is written.
+5. Fix the note myself, answer the Recall Check in my own words, and split
+   anything worth keeping into a concept note with `inbox <concept>`.
+
+No download button? If it streams, it downloads: DevTools → Network → copy
+the `.m3u8`/`.mp4` URL → `ytnote --file "<url>"`. Personal study only; don't
+re-share paid content. `auto-editor talk.mp4` cuts the silences first.
+
+**Rate-limited captions (HTTP 429):** wait an hour, or
+`YTNOTE_COOKIES=firefox ytnote <url>`. `YTNOTE_WHISPER_MODEL=base.en` is
+faster but less accurate than the default `small.en`.
+
+### Delve: research a topic
+
+- **claude.ai → Research** in the message box: multi-source, cited report in
+  a few minutes. Paste it into NotebookLM for an audio overview.
+- **Claude Code deep research:** ask for deep research on a topic and to save
+  the report into the vault. Uses more plan quota; keep it for topics worth an hour.
+- Ask narrow questions ("Longhorn replica count for a 3-node homelab"), and
+  check the citations on anything I'll act on.
+
+### Absorb: make it stick
+
+- Test within hours, again a few days later, then weekly. Testing beats re-reading.
+- Sunday review (15 min): answer 5 Recall Checks cold, update one note.
+- Anki only for facts that need instant recall (ports, flags, syntax).
+- Lab it: one thing per week on `helios`. Pitch lab time at work as research
+  for a concrete proposal, not "lab time".
+
+### Tools for this section
+
+| Tool | Install | What for |
+|---|---|---|
+| `yt-dlp` + `deno` | `install-yt-dlp` | captions, downloads (`yt-dlp -U` to update) |
+| `fabric` | `install-fabric`, then `fabric --setup` | Sample summaries |
+| `whisper-ctranslate2` | `install-whisper` | local transcripts for `ytnote --file` |
+| `auto-editor` | `install-auto-editor` | cut silences from talks |
+| `ytnote` | in `scripts/` | the Delve/Absorb note loop |
+
+## 8. New machine
 
 ```sh
 ./bootstrap --server     # includes claude, links ~/.claude config
