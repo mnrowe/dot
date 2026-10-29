@@ -2,6 +2,7 @@
   "model": "opus[1m]",
   "effortLevel": "medium",
   "tui": "fullscreen",
+  "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
-  "switchModelsOnFlag": false
+  "theme": "dark-daltonized"
 }
